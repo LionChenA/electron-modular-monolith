@@ -86,7 +86,12 @@
       }
     },
     {
-      "includes": ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.test.ts", "src/**/*.test.tsx"],
+      "includes": [
+        "src/**/*.spec.ts",
+        "src/**/*.spec.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx"
+      ],
       "linter": {
         "rules": {
           "correctness": {
