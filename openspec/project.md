@@ -11,19 +11,28 @@ An Electron desktop application with a modular architecture, featuring a React-b
 - **Language**: TypeScript 5.x
 - **UI Styling**: CSS with custom assets
 - **Process Architecture**: Main process (Node.js) + Preload script + Renderer (React)
+- **Code Quality**: Biome 2.x (unified formatter + linter)
 
 ## Project Conventions
 
 ### Code Style
-- **Formatter**: Prettier (configured in VSCode settings)
-  - Default formatter for TypeScript, JavaScript, and JSON
-- **Linting**: ESLint with TypeScript and React plugins
-  - Uses @electron-toolkit ESLint configurations
+- **Formatter & Linter**: Biome 2.x
+  - Unified toolchain replacing ESLint + Prettier
+  - 97% Prettier compatibility for formatting
+  - 366+ linting rules with recommended defaults
+  - Single command for format + lint: `biome check`
+- **VS Code Integration**: Biome LSP
+  - Automatic formatting on save
+  - Import organization on save
+  - Code actions and quick fixes
 - **Naming Conventions**:
   - PascalCase for React components (e.g., `App.tsx`, `Versions.tsx`)
   - camelCase for functions and variables
   - kebab-case for file and directory names
 - **Path Aliases**: `@renderer/*` for renderer source imports
+- **Scripts**:
+  - `pnpm check` - Format, lint, and apply safe fixes (format + lint + organize imports)
+  - `pnpm check:unsafe` - Apply ALL fixes including unsafe ones
 
 ### Architecture Patterns
 - **Three-Process Architecture**:
@@ -68,7 +77,6 @@ An Electron desktop application with a modular architecture, featuring a React-b
   - `@electron-toolkit/utils`: Core utilities
   - `@electron-toolkit/preload`: Preload script helpers
   - `@electron-toolkit/tsconfig`: TypeScript configurations
-  - `@electron-toolkit/eslint-config-*/`: ESLint configurations
 - **Electron Ecosystem**:
   - `electron`: Core runtime
   - `electron-builder`: Packaging and distribution
@@ -76,5 +84,6 @@ An Electron desktop application with a modular architecture, featuring a React-b
 - **Development Tools**:
   - `electron-vite`: Build tool and development server
   - `@vitejs/plugin-react`: React support for Vite
-  - `prettier`: Code formatting
-  - `eslint`: Linting and code quality
+  - `@biomejs/biome`: Unified formatter, linter, and code quality tool
+  - `husky`: Git hooks for pre-commit quality checks
+  - `lint-staged`: Run linters on staged files
