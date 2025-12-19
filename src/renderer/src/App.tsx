@@ -22,9 +22,9 @@ function App(): React.JSX.Element {
           </a>
         </div>
         <div className='action'>
-          <a target='_blank' rel='noreferrer' onClick={ipcHandle}>
+          <button type='button' onClick={ipcHandle}>
             Send IPC
-          </a>
+          </button>
         </div>
       </div>
       <Versions></Versions>
