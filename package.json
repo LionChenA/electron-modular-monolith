@@ -41,13 +41,16 @@
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.6"
+    "vite": "npm:rolldown-vite@latest"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "electron",
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "vite": "npm:rolldown-vite@latest"
+    }
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,json,jsonc}": [
