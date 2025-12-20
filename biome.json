@@ -12,7 +12,8 @@
       "*.config.js",
       "*.config.ts",
       "*.config.mts",
-      "electron.vite.config.ts"
+      "electron.vite.config.ts",
+      ".vscode/*.json"
     ]
   },
   "formatter": {

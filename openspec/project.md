@@ -18,8 +18,8 @@ An Electron desktop application with a modular architecture, featuring a React-b
 ### Code Style
 - **Formatter & Linter**: Biome 2.x
   - Unified toolchain replacing ESLint + Prettier
-  - 97% Prettier compatibility for formatting
-  - 366+ linting rules with recommended defaults
+  - High Prettier compatibility for formatting
+  - Comprehensive linting rules with recommended defaults
   - Single command for format + lint: `biome check`
 - **VS Code Integration**: Biome LSP
   - Automatic formatting on save
