@@ -1,10 +1,8 @@
 ---
 title: "Usage of electron-vite in project"
 tags: [electron, vite, build-tool, tooling]
-# List of official Context7 documentation IDs used as primary sources.
 sources:
   - id: "/websites/electron-vite"
-# List of NPM packages from this ecosystem that are USED in our project.
 packages:
   - id: "electron-vite"
     description: "Next-generation Electron build tool based on Vite"
@@ -31,7 +29,7 @@ packages:
 
 ## 2. API
 
-`electron-vite` drastically simplifies configuration by using a single file: `electron.vite.config.ts`. Without it, you would typically need separate `vite.config.ts` files for the main, preload, and renderer processes.
+`electron-vite` simplifies configuration by using a single file: `electron.vite.config.ts`.
 
 **Key Config Structure:**
 
@@ -41,9 +39,16 @@ import { defineConfig } from 'electron-vite'
 export default defineConfig({
   main: {
     // Config for Main Process (Node.js environment)
+    build: {
+      externalizeDeps: true, // Automatically externalize dependencies
+      bytecode: true         // Enable bytecode protection
+    }
   },
   preload: {
     // Config for Preload Scripts (Node.js + Browser sandbox)
+    build: {
+      externalizeDeps: true
+    }
   },
   renderer: {
     // Config for Renderer (Web environment, standard Vite config)
@@ -57,16 +62,6 @@ export default defineConfig({
 - **Main Process:** Checks `<root>/src/main/{index|main}.{js|ts|mjs|cjs}`
 - **Preload Scripts:** Checks `<root>/src/preload/{index|preload}.{js|ts|mjs|cjs}`
 - **Renderer:** Checks `<root>/src/renderer/index.html`
-
-**Environment Variables:**
-
-```typescript
-// Access in main/preload
-process.env.MAIN_VITE_API_URL
-
-// Access in renderer (must use VITE_ prefix)
-import.meta.env.VITE_API_URL
-```
 
 ## 3. Features
 
@@ -164,6 +159,7 @@ TypeScript is supported out-of-the-box.
 This is a critical feature.
 -   **Externalization:** `electron-vite` automatically "externalizes" dependencies for Main and Preload processes.
 -   **Why?** Dependencies like `serialport` or `sqlite3` are native Node modules. Bundling them often breaks them. Externalizing ensures `require('sqlite3')` works at runtime by keeping them in `node_modules` (or unpacked `app.asar`).
+-   **Configuration:** Use `build.externalizeDeps: true` (Recommended in v5+) instead of the deprecated plugin.
 -   **Renderer:** Dependencies are bundled as usual for the browser, unless specified otherwise.
 
 ### Isolated Build (Build Isolation)
@@ -177,105 +173,68 @@ This is a key feature in newer versions (v5+).
 ### Additional Supported Features
 
 #### Source Code Protection
-- **Bytecode Caching**: V8 bytecode optimization for faster startup
-- **Architecture-aware**: Platform-specific caching (x64, ARM64)
-- **Production Enhancement**: Significant performance improvements
+- **Bytecode Caching**: Enable via `build.bytecode: true` for faster startup and protection.
+- **Architecture-aware**: Platform-specific caching (x64, ARM64).
 
 #### Electron Forge Integration
-- **Packaging**: Out-of-the-box Electron Forge support
-- **Distribution**: Automated app packaging and publishing
-- **Configuration**: Simple forge.config.cjs setup
-
-#### WebView Support
-- **Embedding**: WebView with preload script attachment
-- **Configuration**: `will-attach-webview` event handling
-- **Use Case**: Complex UI scenarios with embedded web content
-
-#### Utility Process Support
-- **Child Processes**: `?modulePath` for process forking
-- **Worker Threads**: Background processing support
-- **Performance**: Offload CPU-intensive tasks
-
-#### Advanced Asset Processing
-- **WebAssembly**: `?loader` suffix for main process WASM
-- **Binary Assets**: Optimized handling of binary files
-- **Dynamic Imports**: Runtime asset loading
+- **Packaging**: Out-of-the-box Electron Forge support.
+- **Distribution**: Automated app packaging and publishing.
 
 ## 4. Application
 
 ### Our Project Configuration
 
-**Minimal Setup - Maximum Benefits:**
+**Explicit Setup - Self-Documenting:**
 
 ```typescript
 import { resolve } from 'node:path';
-import react from '@vitejs/plugin-react';
 import { defineConfig } from 'electron-vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  main: {},           // All defaults used
-  preload: {},        // All defaults used
+  main: {
+    plugins: [],
+    build: {
+      externalizeDeps: true, // Auto-externalize node_modules
+      bytecode: true,        // Enable V8 bytecode protection
+      outDir: 'out/main',
+      lib: {
+        entry: 'src/main/index.ts',
+        formats: ['cjs']
+      }
+    }
+  },
+  preload: {
+    build: {
+      externalizeDeps: true,
+      outDir: 'out/preload',
+      lib: {
+        entry: 'src/preload/index.ts',
+        formats: ['cjs']
+      }
+    }
+  },
   renderer: {
+    root: 'src/renderer',
     plugins: [react()],
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
       },
     },
+    build: {
+      outDir: 'out/renderer'
+    }
   },
 });
 ```
 
 ### Key Design Decisions
 
-1. **Leverage Defaults**: Main and preload use all default settings
-2. **React Integration**: Only renderer needs custom configuration
-3. **Path Aliasing**: `@renderer/*` for clean imports
-4. **Zero Manual Entry**: Auto-detected entry points
-
-### Development Workflow
-
-```bash
-# Start development
-npm run dev
-# → electron-vite dev
-# → Builds main/preload
-# → Starts Vite dev server (renderer)
-# → Launches Electron app
-
-# Make changes
-# → Renderer: HMR (instant)
-# → Main/Preload: Hot restart
-
-# Build for production
-npm run build
-# → Type checking
-# → electron-vite build
-# → Production-ready output
-```
-
-### Build Output Structure
-
-```
-out/
-├── main/          # Main process bundle
-├── preload/       # Preload script bundle
-└── renderer/      # Renderer bundle (Vite output)
-```
-
-### Integration with Our Stack
-
-- **TypeScript**: Native support with type checking
-- **React**: Via `@vitejs/plugin-react`
-- **Biome**: Code quality (separate from build)
-- **electron-builder**: Packaging (invoked post-build)
-
-### Environment Variables and Modes
-
--   **Modes:** Supports `.env`, `.env.production`, `.env.development`.
--   **Access in Renderer:** `import.meta.env.VITE_SOME_VAR`. (Variables must be prefixed with `VITE_` to be exposed to renderer).
--   **Access in Main/Preload:** `import.meta.env.MAIN_VITE_SOME_VAR` or standard `process.env`.
--   **HTML:** You can use `%VITE_APP_TITLE%` in `index.html`.
+1. **Explicit Configuration**: We list all key options (even defaults) with comments to serve as project documentation.
+2. **Externalize Dependencies**: We use `build.externalizeDeps: true` for Main/Preload to handle native modules correctly.
+3. **React Integration**: Renderer is configured with `@vitejs/plugin-react`.
+4. **Path Aliasing**: `@renderer/*`, `@main/*`, and `@preload/*` are set for consistent imports.
 
 ## 5. Common Issues
 
@@ -292,7 +251,7 @@ out/
 ### Issue: Native module (sqlite3, serialport) not working
 
 **Symptoms**: Runtime errors with native dependencies
-**Solution**: Ensure `externalizeDeps` is enabled (default in v5.0+)
+**Solution**: Ensure `build.externalizeDeps: true` is configured in `electron.vite.config.ts`.
 
 ### Issue: Multiple windows showing same content
 
@@ -426,6 +385,39 @@ export default defineConfig(({ command, mode }) => {
 })
 ```
 
+### Isolated Build (electron-vite v5+)
+
+Reference: https://electron-vite.org/guide/isolated-build
+
+The `isolatedEntries` option builds each entry as a standalone bundle without code splitting, ensuring all dependencies are inlined per entry.
+
+**Configuration by Process:**
+
+| Process | Behavior | When to Use |
+|---------|----------|-------------|
+| Main | Already optimized by default | No configuration needed |
+| Preload | REQUIRED for multi-entry with sandbox | Multiple preload scripts (browser.js, webview.js) |
+| Renderer | Reduces chunk count | Multi-window apps for better performance |
+
+**Preload with Sandbox Support:**
+```typescript
+preload: {
+  build: {
+    isolatedEntries: true,
+    externalizeDeps: false  // MUST disable for sandbox to work
+  }
+}
+```
+
+**Renderer Performance Optimization:**
+```typescript
+renderer: {
+  build: {
+    isolatedEntries: true  // Reduces generated chunks
+  }
+}
+```
+
 ## Configuration Reference
 
 See `electron.vite.config.ts` in the project root for our specific implementation.
@@ -436,44 +428,31 @@ See `electron.vite.config.ts` in the project root for our specific implementatio
 -   `renderer.resolve.alias`: Path aliases (e.g., `@renderer/`).
 -   `build.isolatedEntries`: Enable isolated build for multi-entry apps.
 -   `build.bytecode`: Enable V8 bytecode caching.
--   `build.externalizeDeps`: Externalize Node.js dependencies.
+-   `build.externalizeDeps`: Externalize Node.js dependencies (Recommended replacement for externalizeDepsPlugin).
 
 ## Project-Specific Usage
 
-Our project uses the minimal configuration:
+Our project uses an **explicit configuration** strategy.
 
 ```typescript
 export default defineConfig({
-  main: {},              // All defaults
-  preload: {},           // All defaults
+  main: {
+    // We explicitly enable dependency externalization
+    build: { externalizeDeps: true }
+  },
+  preload: {
+    build: { externalizeDeps: true }
+  },
   renderer: {
-    plugins: [react()],
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src'),
-      },
-    },
+    // ... renderer config
   },
 })
 ```
 
 **Key Points:**
-- Leverages electron-vite's pre-configured defaults
-- Minimal custom configuration
-- Follows recommended three-process architecture
-- Zero maintenance overhead
-
-Our electron-vite usage is intentionally **minimal and conservative**:
-
-- ✅ **What we use**: Default configurations, React integration, path aliases
-- ✅ **What we ignore**: Advanced multi-window, custom entry points, bytecode caching, source code protection
-- ✅ **Philosophy**: Let electron-vite handle complexity, focus on app logic
-
-This approach provides:
-- Minimal maintenance burden
-- Automatic updates and improvements
-- Best practices by default
-- Fast development experience
+- **Explicit over Implicit**: All key settings are visible in `electron.vite.config.ts`.
+- **Documentation**: Configuration comments serve as the first line of documentation.
+- **Maintenance**: Easier to onboard new developers and debug build issues.
 
 ## Related Resources
 
