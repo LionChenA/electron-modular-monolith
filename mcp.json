@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "electron": {
+      "command": "npx",
+      "args": ["-y", "electron-mcp-server"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "CONTEXT7_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
