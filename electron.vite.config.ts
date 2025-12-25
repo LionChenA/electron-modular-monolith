@@ -4,6 +4,13 @@ import { defineConfig } from 'electron-vite';
 
 export default defineConfig({
   main: {
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/app/main/index.ts'),
+        },
+      },
+    },
     resolve: {
       alias: {
         '@app/main': resolve('src/app/main'),
@@ -14,6 +21,13 @@ export default defineConfig({
     },
   },
   preload: {
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/app/preload/index.ts'),
+        },
+      },
+    },
     resolve: {
       alias: {
         '@app/main': resolve('src/app/main'),
@@ -24,6 +38,14 @@ export default defineConfig({
     },
   },
   renderer: {
+    root: resolve(__dirname, 'src/app/renderer'),
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/app/renderer/index.html'),
+        },
+      },
+    },
     resolve: {
       alias: {
         '@app/main': resolve('src/app/main'),
