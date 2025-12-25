@@ -4,9 +4,9 @@
 - [x] 1.3 Update `tsconfig.node.json` and `tsconfig.web.json` `paths` and `include` arrays aligned with ARCHITECTURE_BLUEPRINT.md.
 
 ## 2. Code Migration (Lift & Shift)
-- [ ] 2.1 Move `src/main` contents to `src/app/main`.
-- [ ] 2.2 Move `src/preload` contents to `src/app/preload`.
-- [ ] 2.3 Move `src/renderer` contents to `src/app/renderer`.
+- [x] 2.1 Move `src/main` contents to `src/app/main`.
+- [x] 2.2 Move `src/preload` contents to `src/app/preload`.
+- [x] 2.3 Move `src/renderer` contents to `src/app/renderer`.
 - [ ] 2.4 Mass update relative imports in `src/app/**/*` to point to new locations.
 - [ ] 2.5 Fix `package.json` scripts if they reference specific paths.
 
