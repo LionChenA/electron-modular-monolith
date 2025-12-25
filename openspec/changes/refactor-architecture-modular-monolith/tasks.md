@@ -1,7 +1,7 @@
 ## 1. Infrastructure Setup
-- [ ] 1.1 Create `src/app`, `src/features`, `src/shared` directories.
-- [ ] 1.2 Update `electron.vite.config.ts` to support `@app`, `@features`, `@shared` aliases.
-- [ ] 1.3 Update `tsconfig.json`, `tsconfig.node.json`, and `tsconfig.web.json` `paths` and `include` arrays.
+- [x] 1.1 Create `src/app`, `src/features`, `src/shared` directories.
+- [x] 1.2 Update `electron.vite.config.ts` to support `@app/main`, `@app/preload`, `@app/renderer`, `@features`, `@shared` aliases.
+- [x] 1.3 Update `tsconfig.node.json` and `tsconfig.web.json` `paths` and `include` arrays aligned with ARCHITECTURE_BLUEPRINT.md.
 
 ## 2. Code Migration (Lift & Shift)
 - [ ] 2.1 Move `src/main` contents to `src/app/main`.
