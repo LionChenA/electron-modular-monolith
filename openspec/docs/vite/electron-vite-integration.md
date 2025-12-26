@@ -273,6 +273,11 @@ export default defineConfig({
 **Symptoms**: `emitDecoratorMetadata` errors
 **Solution**: Configure `swcPlugin` for decorator support
 
+### Issue: "Electron failed to install correctly"
+
+**Symptoms**: Error starting the application in development mode.
+**Solution**: This often occurs when there is a mismatch between the build output format (ESM vs. CJS) and the `package.json` "main" entry. For Electron apps, it is recommended to explicitly set `build.lib.formats: ['cjs']` in `electron.vite.config.ts` to ensure compatibility with Node.js path resolution and the standard `__dirname` global.
+
 ## 6. Advanced Topics
 
 ### Debugging Support

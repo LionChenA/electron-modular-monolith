@@ -11,9 +11,9 @@
 - [x] 2.5 Fix `package.json` scripts if they reference specific paths.
 
 ## 3. Verification
-- [ ] 3.1 Run `npm run dev` to verify the application starts correctly.
-- [ ] 3.2 Verify `ping` IPC (existing functionality) still works.
-- [ ] 3.3 Run lint check to ensure no import errors.
+- [x] 3.1 Run `npm run dev` to verify the application starts correctly.
+- [x] 3.2 Verify `ping` IPC (existing functionality) still works.
+- [x] 3.3 Run lint check to ensure no import errors.
 
 ## 4. Documentation
-- [ ] 4.1 Update `README.md` to document the new folder structure.
+- [x] 4.1 Update `README.md` to document the new folder structure.

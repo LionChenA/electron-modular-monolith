@@ -5,10 +5,9 @@ import { defineConfig } from 'electron-vite';
 export default defineConfig({
   main: {
     build: {
-      rollupOptions: {
-        input: {
-          index: resolve(__dirname, 'src/app/main/index.ts'),
-        },
+      lib: {
+        entry: resolve(__dirname, 'src/app/main/index.ts'),
+        formats: ['cjs'],
       },
     },
     resolve: {
@@ -22,10 +21,9 @@ export default defineConfig({
   },
   preload: {
     build: {
-      rollupOptions: {
-        input: {
-          index: resolve(__dirname, 'src/app/preload/index.ts'),
-        },
+      lib: {
+        entry: resolve(__dirname, 'src/app/preload/index.ts'),
+        formats: ['cjs'],
       },
     },
     resolve: {
