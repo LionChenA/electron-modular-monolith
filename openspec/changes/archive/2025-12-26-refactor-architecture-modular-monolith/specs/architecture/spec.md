@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 ### Requirement: Project Structure
 The application code MUST be organized into a Modular Monolith structure.
 
