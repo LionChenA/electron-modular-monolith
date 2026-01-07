@@ -3,7 +3,7 @@
 
 ## 2. ORPC Infrastructure (The Backbone)
 - [x] 2.1 Create `src/app/main/orpc.ts`: Define `publicProcedure` and `MainContext` (configure native error handling).
-- [ ] 2.2 Create `src/app/renderer/infra/client.ts`: Implement `createClient` with MessagePort `RPCLink` and export `orpc` instance.
+- [x] 2.2 Create `src/app/renderer/infra/client.ts`: Implement `createClient` with MessagePort `RPCLink` and export `orpc` instance.
 - [ ] 2.3 Create `src/app/renderer/providers/OrpcProvider.tsx`: Export React Provider wrapping `QueryClientProvider` and `OrpcProvider`.
 - [ ] 2.4 Create `src/app/main/infra/bus.ts`: Implement a typed `EventBus` (native EventEmitter).
 
