@@ -5,7 +5,7 @@ To achieve "Type-Safe IPC" and "AI-Friendly Context", we need to replace the loo
 
 ## What Changes
 - **Infrastructure**:
-  - Install `@orpc/server`, `@orpc/client`, `@orpc/react`, `@tanstack/react-query`.
+  - Install `@orpc/server`, `@orpc/client`, `@orpc/contract`, `@orpc/react`, `@orpc/tanstack-query`, `@tanstack/react-query`, `zod`.
   - Create `src/app/orpc` as the centralized ORPC SDK definition.
   - Implement Electron `MessagePort` handshake in Main and Preload.
 - **Legacy Removal**:

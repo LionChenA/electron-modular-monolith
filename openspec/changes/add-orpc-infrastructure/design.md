@@ -18,9 +18,17 @@ We strictly enforce the following patterns:
 | **Renderer -> Renderer** | React | React Context / Hooks (`useService`) |
 | **Renderer <-> Main** | ORPC | ORPC Context (`os.context<Deps>`) |
 
-### 3. Legacy IPC Removal
+### 3. Legacy IPC Removal & Migration
 - **Decision**: We will NOT expose `ipcRenderer` globally. The Preload script's ONLY job is to forward the `MessagePort` for ORPC.
+- **Migration Strategy**: 
+  - Essential legacy data (e.g., `process.versions`, `platform`) will be migrated to a new `general` feature accessed via RPC queries.
+  - This ensures `src/app/renderer/components/Versions.tsx` and similar components remain functional without `window.electron`.
 - **Impact**: `window.electron` object will be removed.
+
+### 4. Event Bus (Pub/Sub)
+- **Decision**: We implement a typed `EventBus` (EventEmitter) in the Main process and expose it to the Renderer via ORPC Subscriptions (`eventIterator`).
+- **Why**: To support "Server-Push" scenarios (e.g., progress updates) without reverting to `ipcRenderer.on`.
+- **Implementation**: Injected into `MainContext` as `ctx.bus`.
 
 ## Risks / Trade-offs
 - **Risk**: `electron-toolkit` utilities might rely on the default preload exposure.
