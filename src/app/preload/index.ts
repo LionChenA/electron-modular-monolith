@@ -1,22 +1,17 @@
-import { electronAPI } from '@electron-toolkit/preload';
-import { contextBridge } from 'electron';
+import { ipcRenderer } from 'electron';
 
-// Custom APIs for renderer
-const api = {};
-
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
-if (process.contextIsolated) {
-  try {
-    contextBridge.exposeInMainWorld('electron', electronAPI);
-    contextBridge.exposeInMainWorld('api', api);
-  } catch (error) {
-    console.error(error);
+/**
+ * oRPC MessagePort Handshake Bridge
+ *
+ * This listens for the 'init-orpc-port' message from the Renderer process,
+ * extracts the MessagePort, and forwards it to the Main process via ipcRenderer.postMessage.
+ * This establishes the direct type-safe communication channel.
+ */
+window.addEventListener('message', (event) => {
+  if (event.data === 'init-orpc-port') {
+    const [serverPort] = event.ports;
+    if (serverPort) {
+      ipcRenderer.postMessage('orpc-handshake', null, [serverPort]);
+    }
   }
-} else {
-  // @ts-expect-error (define in dts)
-  window.electron = electronAPI;
-  // @ts-expect-error (define in dts)
-  window.api = api;
-}
+});
