@@ -16,7 +16,7 @@
 - [x] 3.4 Rewrite `src/app/preload/index.ts`: Implement the MessagePort handshake bridge (replace legacy contextBridge).
 
 ## 4. Feature Implementation (Contract-First)
-- [ ] 4.1 **General Feature (System Info)**:
+- [x] 4.1 **General Feature (System Info)**:
     - Create `src/features/general/shared/contract.ts`: Define `getVersions`, `getPlatform` (Zod schemas).
     - Create `src/features/general/main/router.ts`: Implement procedures using `implement(contract)`.
 - [ ] 4.2 **Ping Feature (Verification)**:
