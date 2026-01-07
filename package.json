@@ -22,7 +22,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@orpc/client": "^1.13.2",
     "@orpc/contract": "^1.13.2",

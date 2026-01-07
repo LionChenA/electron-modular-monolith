@@ -1,7 +1,7 @@
 import { oc } from '@orpc/contract';
 import { z } from 'zod';
 
-export const generalContract = oc.router({
+export const generalContract = {
   getVersions: oc.output(
     z.object({
       node: z.string(),
@@ -10,4 +10,4 @@ export const generalContract = oc.router({
     }),
   ),
   getPlatform: oc.output(z.string()),
-});
+};

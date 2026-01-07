@@ -27,12 +27,12 @@
 - [x] 4.3 Update `src/app/main/router.ts`: Register `general` and `ping` routers.
 
 ## 5. Frontend Integration & Migration
-- [ ] 5.1 Refactor `src/app/renderer/components/Versions.tsx`: Use `orpc.general.getVersions`.
-- [ ] 5.2 Refactor `src/app/renderer/App.tsx`: 
+- [x] 5.1 Refactor `src/app/renderer/components/Versions.tsx`: Use `orpc.general.getVersions`.
+- [x] 5.2 Refactor `src/app/renderer/App.tsx`: 
     - Use `orpc.ping.ping`.
     - Use `orpc.ping.onPing` (subscription).
-- [ ] 5.3 Remove legacy `ipcMain.on('ping')` from `src/app/main/index.ts`.
+- [x] 5.3 Remove legacy `ipcMain.on('ping')` from `src/app/main/index.ts`.
 
 ## 6. Cleanup
-- [ ] 6.1 Update `src/app/preload/index.d.ts`: Remove `window.electron` and `window.api`.
-- [ ] 6.2 Uninstall `@electron-toolkit/preload` (keep `@electron-toolkit/utils`).
+- [x] 6.1 Update `src/app/preload/index.d.ts`: Remove `window.electron` and `window.api`.
+- [x] 6.2 Uninstall `@electron-toolkit/preload` (keep `@electron-toolkit/utils`).

@@ -5,6 +5,7 @@
     "src/app/main/**/*",
     "src/app/preload/**/*",
     "src/features/*/main/**/*",
+    "src/features/*/shared/**/*",
     "src/shared/**/*"
   ],
   "compilerOptions": {

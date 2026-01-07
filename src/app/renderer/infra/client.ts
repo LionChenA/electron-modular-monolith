@@ -1,6 +1,7 @@
 import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/message-port';
-import type { router } from '../../main/router';
+import { createTanstackQueryUtils } from '@orpc/tanstack-query';
+import type { AppContract } from '../../main/contract';
 
 // We create a MessageChannel for the direct communication
 const { port1: clientPort, port2: serverPort } = new MessageChannel();
@@ -19,7 +20,12 @@ const link = new RPCLink({
 clientPort.start();
 
 /**
- * Export the typed ORPC client.
- * Note: The 'router' type will be fully implemented in Task 4.3.
+ * The raw ORPC client.
  */
-export const orpc = createORPCClient<typeof router>(link);
+export const client = createORPCClient<AppContract>(link);
+
+/**
+ * The TanStack Query integration utilities.
+ * This is what will be used in React components.
+ */
+export const orpc = createTanstackQueryUtils(client);

@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { orpc } from '@app/renderer/infra/client';
+import { useQuery } from '@tanstack/react-query';
 
 function Versions(): React.JSX.Element {
-  const [versions] = useState(window.electron.process.versions);
+  const { data: versions } = useQuery(orpc.general.getVersions.queryOptions());
+
+  if (!versions) {
+    return <ul className='versions' />;
+  }
 
   return (
     <ul className='versions'>
