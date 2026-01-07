@@ -24,7 +24,7 @@
     - Create `src/features/ping/main/router.ts`: Implement logic. 
         - `ping`: Returns "pong" and publishes to EventBus.
         - `onPing`: Subscribes to EventBus and yields events to Renderer.
-- [ ] 4.3 Update `src/app/main/router.ts`: Register `general` and `ping` routers.
+- [x] 4.3 Update `src/app/main/router.ts`: Register `general` and `ping` routers.
 
 ## 5. Frontend Integration & Migration
 - [ ] 5.1 Refactor `src/app/renderer/components/Versions.tsx`: Use `orpc.general.getVersions`.

@@ -1,11 +1,13 @@
-import { publicProcedure } from './orpc';
+import { generalRouter } from '../../features/general/main/router';
+import { pingRouter } from '../../features/ping/main/router';
 
 /**
  * The root router for the main process.
- * Feature-specific routers will be registered here in Task 4.3.
+ * Registers all feature routers.
  */
 export const router = {
-  ping: publicProcedure.handler(async () => 'pong'),
+  general: generalRouter,
+  ping: pingRouter,
 };
 
 export type AppRouter = typeof router;
