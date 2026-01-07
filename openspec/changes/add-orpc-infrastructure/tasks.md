@@ -8,7 +8,7 @@
 - [x] 2.4 Create `src/app/main/infra/bus.ts`: Implement a typed `EventBus` (native EventEmitter).
 
 ## 3. Communication Channel (The Plumbing)
-- [ ] 3.1 Update `src/app/main/context.ts`: Define `MainContext` type (inject `db`, `bus`, `window`).
+- [x] 3.1 Update `src/app/main/context.ts`: Define `MainContext` type (inject `db`, `bus`, `window`).
 - [ ] 3.2 Create `src/app/main/ipc.ts`: Implement `RPCHandler` logic:
     - Handle MessagePort handshake.
     - Inject `MainContext` (with `EventBus` instance) into the handler.
