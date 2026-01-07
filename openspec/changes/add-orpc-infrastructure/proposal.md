@@ -6,7 +6,7 @@ To achieve "Type-Safe IPC" and "AI-Friendly Context", we need to replace the loo
 ## What Changes
 - **Infrastructure**:
   - Install `@orpc/server`, `@orpc/client`, `@orpc/contract`, `@orpc/react`, `@orpc/tanstack-query`, `@tanstack/react-query`, `zod`.
-  - Create `src/app/orpc` as the centralized ORPC SDK definition.
+  - Implement ORPC Core in `src/app/main/orpc.ts` (Server) and `src/app/renderer/infra/client.ts` (Client).
   - Implement Electron `MessagePort` handshake in Main and Preload.
 - **Legacy Removal**:
   - Remove `electron-toolkit` default `contextBridge` exposure (`window.electron`) in favor of ORPC.

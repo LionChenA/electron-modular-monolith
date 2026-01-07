@@ -1,12 +1,11 @@
 ## 1. Dependencies
 - [ ] 1.1 Install `@orpc/server`, `@orpc/client`, `@orpc/contract`, `@orpc/react`, `@orpc/tanstack-query`, `@tanstack/react-query`, `zod`.
 
-## 2. ORPC SDK & Infrastructure (The Backbone)
-- [ ] 2.1 Create `src/app/orpc/server.ts`: Define `publicProcedure` and `MainContext`.
-    - Configure native error handling (e.g., `ORPCError`).
-- [ ] 2.2 Create `src/app/orpc/client.ts`: Implement `createClient` with MessagePort `RPCLink`.
-- [ ] 2.3 Create `src/app/orpc/react.ts`: Export `useOrpc` and providers.
-- [ ] 2.4 Create `src/app/main/bus.ts`: Implement a typed `EventBus` (native EventEmitter) for Main process.
+## 2. ORPC Infrastructure (The Backbone)
+- [ ] 2.1 Create `src/app/main/orpc.ts`: Define `publicProcedure` and `MainContext` (configure native error handling).
+- [ ] 2.2 Create `src/app/renderer/infra/client.ts`: Implement `createClient` with MessagePort `RPCLink` and export `orpc` instance.
+- [ ] 2.3 Create `src/app/renderer/providers/OrpcProvider.tsx`: Export React Provider wrapping `QueryClientProvider` and `OrpcProvider`.
+- [ ] 2.4 Create `src/app/main/infra/bus.ts`: Implement a typed `EventBus` (native EventEmitter).
 
 ## 3. Communication Channel (The Plumbing)
 - [ ] 3.1 Update `src/app/main/context.ts`: Define `MainContext` type (inject `db`, `bus`, `window`).
@@ -18,20 +17,20 @@
 
 ## 4. Feature Implementation (Contract-First)
 - [ ] 4.1 **General Feature (System Info)**:
-    - Create `src/features/general/contract.ts`: Define `getVersions`, `getPlatform`.
-    - Create `src/features/general/main/router.ts`: Implement procedures.
+    - Create `src/features/general/shared/contract.ts`: Define `getVersions`, `getPlatform` (Zod schemas).
+    - Create `src/features/general/main/router.ts`: Implement procedures using `implement(contract)`.
 - [ ] 4.2 **Ping Feature (Verification)**:
-    - Create `src/features/ping/contract.ts`: Define `ping` (query) and `onPing` (subscription).
+    - Create `src/features/ping/shared/contract.ts`: Define `ping` (query) and `onPing` (subscription).
     - Create `src/features/ping/main/router.ts`: Implement logic. 
         - `ping`: Returns "pong" and publishes to EventBus.
         - `onPing`: Subscribes to EventBus and yields events to Renderer.
 - [ ] 4.3 Update `src/app/main/router.ts`: Register `general` and `ping` routers.
 
 ## 5. Frontend Integration & Migration
-- [ ] 5.1 Refactor `src/app/renderer/components/Versions.tsx`: Use `orpc.general.getVersions` (via `useQuery`).
+- [ ] 5.1 Refactor `src/app/renderer/components/Versions.tsx`: Use `orpc.general.getVersions`.
 - [ ] 5.2 Refactor `src/app/renderer/App.tsx`: 
-    - Use `orpc.ping.ping` (mutation/query).
-    - Use `orpc.ping.onPing` (subscription) to demonstrate Pub/Sub.
+    - Use `orpc.ping.ping`.
+    - Use `orpc.ping.onPing` (subscription).
 - [ ] 5.3 Remove legacy `ipcMain.on('ping')` from `src/app/main/index.ts`.
 
 ## 6. Cleanup
