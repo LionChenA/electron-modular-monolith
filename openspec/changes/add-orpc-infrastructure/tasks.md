@@ -1,5 +1,5 @@
 ## 1. Dependencies
-- [ ] 1.1 Install `@orpc/server`, `@orpc/client`, `@orpc/contract`, `@orpc/react`, `@orpc/tanstack-query`, `@tanstack/react-query`, `zod`.
+- [x] 1.1 Install `@orpc/server`, `@orpc/client`, `@orpc/contract`, `@orpc/react`, `@orpc/tanstack-query`, `@tanstack/react-query`, `zod`.
 
 ## 2. ORPC Infrastructure (The Backbone)
 - [ ] 2.1 Create `src/app/main/orpc.ts`: Define `publicProcedure` and `MainContext` (configure native error handling).
