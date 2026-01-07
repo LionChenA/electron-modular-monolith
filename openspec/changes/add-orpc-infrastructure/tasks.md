@@ -9,7 +9,7 @@
 
 ## 3. Communication Channel (The Plumbing)
 - [x] 3.1 Update `src/app/main/context.ts`: Define `MainContext` type (inject `db`, `bus`, `window`).
-- [ ] 3.2 Create `src/app/main/ipc.ts`: Implement `RPCHandler` logic:
+- [x] 3.2 Create `src/app/main/ipc.ts`: Implement `RPCHandler` logic:
     - Handle MessagePort handshake.
     - Inject `MainContext` (with `EventBus` instance) into the handler.
 - [ ] 3.3 Update `src/app/main/index.ts`: Initialize IPC handler and EventBus on app launch.
