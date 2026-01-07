@@ -12,7 +12,7 @@
 - [x] 3.2 Create `src/app/main/ipc.ts`: Implement `RPCHandler` logic:
     - Handle MessagePort handshake.
     - Inject `MainContext` (with `EventBus` instance) into the handler.
-- [ ] 3.3 Update `src/app/main/index.ts`: Initialize IPC handler and EventBus on app launch.
+- [x] 3.3 Update `src/app/main/index.ts`: Initialize IPC handler and EventBus on app launch.
 - [ ] 3.4 Rewrite `src/app/preload/index.ts`: Implement the MessagePort handshake bridge (replace legacy contextBridge).
 
 ## 4. Feature Implementation (Contract-First)
