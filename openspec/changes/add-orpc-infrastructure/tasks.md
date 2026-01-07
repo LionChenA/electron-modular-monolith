@@ -19,7 +19,7 @@
 - [x] 4.1 **General Feature (System Info)**:
     - Create `src/features/general/shared/contract.ts`: Define `getVersions`, `getPlatform` (Zod schemas).
     - Create `src/features/general/main/router.ts`: Implement procedures using `implement(contract)`.
-- [ ] 4.2 **Ping Feature (Verification)**:
+- [x] 4.2 **Ping Feature (Verification)**:
     - Create `src/features/ping/shared/contract.ts`: Define `ping` (query) and `onPing` (subscription).
     - Create `src/features/ping/main/router.ts`: Implement logic. 
         - `ping`: Returns "pong" and publishes to EventBus.
