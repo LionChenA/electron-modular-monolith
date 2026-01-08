@@ -81,3 +81,21 @@ If you have already implemented procedures using the standard approach (`os.hand
 This involves extracting the schemas into a separate contract file (`@orpc/contract`) and then using `.implement()` in your existing server code. This is useful for improving decoupling or sharing types with a client that doesn't have access to your server implementation.
 
 *For detailed refactoring steps, refer to: [Router to Contract Guide](https://orpc.dev/docs/contract-first/router-to-contract)*
+
+## 5. Consuming Contracts on the Client
+
+When using a contract to create a client, TypeScript inference can sometimes fail because the contract structure (containing builders) doesn't strictly match the client's expected structure (async functions).
+
+To ensure full type safety, use the `ContractRouterClient` utility type:
+
+```ts
+import { createORPCClient } from '@orpc/client';
+import { ContractRouterClient } from '@orpc/contract';
+import { contract } from './shared/contract';
+
+// ❌ Avoid relying on implicit inference for contracts
+// const client = createORPCClient<typeof contract>(link);
+
+// ✅ Explicitly cast to ContractRouterClient
+const client: ContractRouterClient<typeof contract> = createORPCClient(link);
+```
