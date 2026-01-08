@@ -39,6 +39,10 @@ An Electron desktop application with a modular architecture, featuring a React-b
   - **Main Process** (`src/main/`): Electron window management, native APIs, app lifecycle
   - **Preload Script** (`src/preload/`): Secure bridge between main and renderer, context isolation enabled
   - **Renderer Process** (`src/renderer/`): React SPA with client-side routing and UI
+- **Communication Pattern**:
+  - **ORPC**: Type-safe Remote Procedure Call for Renderer -> Main
+  - **MessagePort**: Direct high-performance channel (bypassing contextBridge serialization overhead)
+  - **Decentralized Contracts**: Features define self-contained contracts; Client composes them on demand
 - **Context Isolation**: Enabled with secure IPC communication
 - **Module Structure**:
   - Modular organization ready for scaling into multiple features
@@ -72,7 +76,10 @@ An Electron desktop application with a modular architecture, featuring a React-b
 - **Type Safety**: Strict TypeScript configuration with composite projects
 - **Resource Management**: Static assets loaded via Vite's asset pipeline
 
-## External Dependencies
+- **External Dependencies**:
+  - `@orpc/*`: End-to-end type-safe RPC ecosystem (Server, Client, Contract, React/Query)
+  - `@tanstack/react-query`: Data fetching and state management
+  - `zod`: Schema validation and contract definition
 - **@electron-toolkit**: Utility packages for Electron development
   - `@electron-toolkit/utils`: Core utilities
   - `@electron-toolkit/preload`: Preload script helpers
