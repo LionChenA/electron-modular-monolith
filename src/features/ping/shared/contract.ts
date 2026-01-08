@@ -3,6 +3,6 @@ import { eventIterator } from '@orpc/server';
 import { z } from 'zod';
 
 export const pingContract = {
-  sendPing: oc.output(z.string()),
-  onPing: oc.output(eventIterator(z.string())),
+  sendPing: oc.input(z.void()).output(z.string()),
+  onPing: oc.input(z.void()).output(eventIterator(z.string())),
 };

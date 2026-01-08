@@ -1,36 +1,43 @@
 import { EventEmitter } from 'node:events';
 
-/**
- * A simple typed EventBus for internal communication.
- * This will be injected into the ORPC context.
- */
-export class EventBus extends EventEmitter {
-  /**
-   * Typed emit
-   */
-  publish<T>(event: string, data: T): void {
-    this.emit(event, data);
-  }
+// Create a singleton instance internally
+const emitter = new EventEmitter();
 
-  /**
-   * Typed subscription for ORPC SSE
-   */
-  async *subscribe<T>(event: string, signal?: AbortSignal): AsyncIterableIterator<T> {
-    const onEvent = (data: T) => {
-      // Internal handler
+export const bus = {
+  publish: <T>(event: string, data: T): void => {
+    emitter.emit(event, data);
+  },
+
+  subscribe: <T>(event: string, signal?: AbortSignal): AsyncIterableIterator<T> => {
+    return {
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+      next: () => {
+        if (signal?.aborted) {
+          return Promise.resolve({ value: undefined, done: true });
+        }
+        return new Promise<IteratorResult<T>>((resolve) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const listener = (...args: any[]) => {
+            resolve({ value: args[0] as T, done: false });
+          };
+          emitter.once(event, listener);
+
+          if (signal) {
+            signal.addEventListener(
+              'abort',
+              () => {
+                emitter.off(event, listener);
+                resolve({ value: undefined, done: true });
+              },
+              { once: true },
+            );
+          }
+        });
+      },
     };
+  },
+};
 
-    try {
-      while (!signal?.aborted) {
-        const [data] = (await new Promise((resolve) => {
-          this.once(event, (...args) => resolve(args));
-        })) as [T];
-        yield data;
-      }
-    } finally {
-      // Cleanup happens via the AsyncGenerator lifecycle
-    }
-  }
-}
-
-export const bus = new EventBus();
+export type EventBus = typeof bus;

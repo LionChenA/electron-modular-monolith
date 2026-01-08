@@ -1,5 +1,6 @@
 import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/message-port';
+import type { ContractRouterClient } from '@orpc/contract';
 import { createTanstackQueryUtils } from '@orpc/tanstack-query';
 import type { AppContract } from '../../main/contract';
 
@@ -22,7 +23,7 @@ clientPort.start();
 /**
  * The raw ORPC client.
  */
-export const client = createORPCClient<AppContract>(link);
+export const client: ContractRouterClient<AppContract> = createORPCClient(link);
 
 /**
  * The TanStack Query integration utilities.
