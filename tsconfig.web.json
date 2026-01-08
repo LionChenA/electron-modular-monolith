@@ -19,6 +19,8 @@
       "@app/main/*": ["src/app/main/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"]
-    }
+    },
+    "outDir": "dist/types/web",
+    "rootDir": "."
   }
 }

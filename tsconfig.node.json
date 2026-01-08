@@ -17,6 +17,8 @@
       "@app/preload/*": ["src/app/preload/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"]
-    }
+    },
+    "outDir": "dist/types/node",
+    "rootDir": "."
   }
 }
