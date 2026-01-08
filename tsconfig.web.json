@@ -5,7 +5,6 @@
     "src/app/renderer/**/*",
     "src/app/renderer/**/*.tsx",
     "src/app/preload/*.d.ts",
-    "src/app/main/contract.ts",
     "src/features/*/renderer/**/*",
     "src/features/*/shared/**/*",
     "src/shared/**/*"

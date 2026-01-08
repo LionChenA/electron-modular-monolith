@@ -13,7 +13,7 @@ src/
 │   │   │   └── secrets.ts    # ISecrets implementation
 │   │   │
 │   │   ├── context.ts        # 🔴 Context Assembly (Runtime Object)
-│   │   ├── router.ts         # ORPC Root Router (Aggregator)
+│   │   ├── router.ts         # ORPC Root Router (Implementation Aggregator)
 │   │   ├── ipc.ts            # Main Entry: setup RPCHandler(ctx)
 │   │   └── index.ts          # App Lifecycle (createWindow)
 │   │
@@ -133,3 +133,15 @@ When adding a new capability, follow this **Dependency Inversion** workflow:
 ### Pragmatic Abstraction & Infrastructure
 - **Rule**: Define interfaces for *Testability* first, *Portability* second.
 - **Cross-Cutting Concerns**: Global systems (Shortcuts, Auto-Updater, Notifications) should reside in `src/app/infra` as centralized services and be injected into Features via Context. This prevents feature-level conflicts and simplifies cleanup.
+
+## 8. Decentralized Contracts Pattern
+Unlike traditional architectures that enforce a monolithic `AppRouter` shared with the frontend, we use a **Decentralized Contract** pattern:
+
+1.  **Definition**: Each feature defines its own Contract in `src/features/<feature>/shared/contract.ts`.
+2.  **Implementation**: The Main process imports these contracts to implement routers.
+3.  **Consumption**: The Renderer process (`client.ts`) imports **only the contracts it needs** and composes them into a client-side definition.
+
+**Why?**
+- Decouples Frontend from Backend implementation structure.
+- Allows flexibility (e.g., different windows can have different API clients).
+- Prevents `src/app/renderer` from importing types from `src/app/main`.

@@ -2,7 +2,8 @@ import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/message-port';
 import type { ContractRouterClient } from '@orpc/contract';
 import { createTanstackQueryUtils } from '@orpc/tanstack-query';
-import type { AppContract } from '../../main/contract';
+import { generalContract } from '../../../features/general/shared/contract';
+import { pingContract } from '../../../features/ping/shared/contract';
 
 // We create a MessageChannel for the direct communication
 const { port1: clientPort, port2: serverPort } = new MessageChannel();
@@ -20,10 +21,15 @@ const link = new RPCLink({
 
 clientPort.start();
 
+const contract = {
+  general: generalContract,
+  ping: pingContract,
+};
+
 /**
  * The raw ORPC client.
  */
-export const client: ContractRouterClient<AppContract> = createORPCClient(link);
+export const client: ContractRouterClient<typeof contract> = createORPCClient(link);
 
 /**
  * The TanStack Query integration utilities.
