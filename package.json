@@ -29,8 +29,16 @@
     "@orpc/react": "^1.13.2",
     "@orpc/server": "^1.13.2",
     "@orpc/tanstack-query": "^1.13.2",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.16",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "electron-updater": "^6.3.9",
+    "lucide-react": "^0.562.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^4.3.5"
   },
   "devDependencies": {

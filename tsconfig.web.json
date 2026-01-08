@@ -15,6 +15,7 @@
     "baseUrl": ".",
     "paths": {
       "@app/renderer/*": ["src/app/renderer/*"],
+      "@src/*": ["src/*"],
       "@app/main/*": ["src/app/main/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"]
