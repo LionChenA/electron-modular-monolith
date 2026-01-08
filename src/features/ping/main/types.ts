@@ -1,7 +1,4 @@
-export interface EventBus {
-  publish<T>(event: string, data: T): void;
-  subscribe<T>(event: string, signal?: AbortSignal): AsyncIterableIterator<T>;
-}
+import type { EventBus } from '../../../shared/interfaces/bus';
 
 export interface PingDeps {
   bus: EventBus;
