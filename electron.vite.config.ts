@@ -55,6 +55,23 @@ export default defineConfig({
         '@shared': resolve('src/shared'),
       },
     },
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'html-csp-transform',
+        transformIndexHtml(html): string {
+          const devCSP =
+            "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:";
+          const prodCSP =
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:";
+          const csp = process.env.NODE_ENV === 'development' ? devCSP : prodCSP;
+          return html.replace(
+            '<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->',
+            `<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`,
+          );
+        },
+      },
+    ],
   },
 });

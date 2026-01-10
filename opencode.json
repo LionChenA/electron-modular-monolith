@@ -9,7 +9,7 @@
       "type": "local",
       "command": ["npx", "-y", "electron-mcp-server"],
       "environment": {
-        "SECURITY_LEVEL": "balanced",
+        "SECURITY_LEVEL": "development",
         "SCREENSHOT_ENCRYPTION_KEY": "2635c93a8efc1e66d7a858805e153094e430f384c79d4002a45ddd46b98f1ea7"
       }
     },
