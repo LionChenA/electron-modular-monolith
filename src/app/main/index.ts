@@ -4,6 +4,11 @@ import { app, BrowserWindow, shell } from 'electron';
 import icon from '../../../resources/icon.png?asset';
 import { setupIPC } from './ipc';
 
+if (is.dev) {
+  app.commandLine.appendSwitch('remote-debugging-port', '9222');
+  app.commandLine.appendSwitch('remote-allow-origins', '*');
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
