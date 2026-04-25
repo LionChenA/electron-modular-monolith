@@ -173,10 +173,10 @@ describe('Secrets', () => {
       expect(secrets.isEncryptionAvailable).toBe(true);
     });
 
-    it('returns false when encryption is not available', () => {
+    it('throws when encryption is not available', () => {
       mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-      expect(secrets.isEncryptionAvailable).toBe(false);
+      const s = createSecrets();
+      expect(() => s.set('key', 'value')).toThrow(/Secure storage is not available/);
     });
 
     it('caches encryption availability result', () => {
@@ -193,12 +193,10 @@ describe('Secrets', () => {
       expect(status.available).toBe(true);
     });
 
-    it('returns fallback mode when encryption unavailable', () => {
+    it('throws when encryption unavailable', () => {
       mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-      const status = secrets.encryptionStatus;
-      expect(status.mode).toBe('fallback');
-      expect(status.available).toBe(false);
+      const s = createSecrets();
+      expect(() => s.encryptionStatus).toThrow(/Secure storage is not available/);
     });
 
     it('returns a copy of status (immutable)', () => {
@@ -234,45 +232,6 @@ describe('Secrets', () => {
       secrets.set('b', '2');
       secrets.clear();
       expect(secrets.keys).toEqual([]);
-    });
-  });
-
-  describe('fallback mode (encryption unavailable)', () => {
-    it('uses base64 encoding when encryption is not available', () => {
-      mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-
-      secrets.set('api-key', 'my-secret');
-
-      const stored = mockData['api-key'];
-      expect(stored).toBeDefined();
-      const decoded = Buffer.from(stored ?? '', 'base64').toString('utf-8');
-      expect(decoded).toBe('my-secret');
-    });
-
-    it('decodes base64 when encryption was unavailable', () => {
-      mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-
-      secrets.set('api-key', 'my-secret');
-
-      const result = secrets.get('api-key');
-      expect(result).toBe('my-secret');
-    });
-
-    it('sets isEncryptionAvailable to false in fallback mode', () => {
-      mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-      expect(secrets.isEncryptionAvailable).toBe(false);
-    });
-
-    it('does not produce console warnings in fallback mode', () => {
-      mocks.isEncryptionAvailable.mockReturnValueOnce(false);
-      secrets = createSecrets();
-      secrets.set('api-key', 'my-secret');
-      secrets.get('api-key');
-      expect(consoleSpy).not.toHaveBeenCalled();
-      expect(errorSpy).not.toHaveBeenCalled();
     });
   });
 

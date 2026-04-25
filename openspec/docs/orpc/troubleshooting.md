@@ -46,3 +46,36 @@ export const contract = oc.router({
 // client usage
 await client.ping(); // Now valid without arguments
 ```
+
+## Context & Middleware Patterns
+
+### `context: {} as never` in IPC Handler is Correct
+
+**Appearance:**
+```typescript
+// src/app/main/ipc.ts
+handler.upgrade(port, {
+  context: {} as never,  // Looks wrong...
+});
+```
+
+**Concern:**
+The initial context passed during the MessagePort handshake appears to be empty. Reviewers may flag this as "procedures will have no access to db, prefs, secrets."
+
+**Explanation:**
+This is intentional. The handshake context is only an initial value. The actual runtime context is injected via the `withDeps` middleware in `orpc.ts`:
+
+```typescript
+// src/app/main/orpc.ts
+const withDeps = publicProcedure.middleware(async ({ next }) => {
+  const ctx = getRuntimeContext();  // ← Overrides handshake context
+  return next({ context: ctx });
+});
+
+export const procedure = publicProcedure.use(withDeps);
+```
+
+All procedures use `procedure` (not `publicProcedure`), so they always get the initialized context at runtime.
+
+**When to Flag:**
+Only flag if the middleware is removed, or if `getRuntimeContext()` is called before `setRuntimeContext()`.

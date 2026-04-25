@@ -2,7 +2,7 @@ import { safeStorage } from 'electron';
 import Store from 'electron-store';
 
 export interface EncryptionStatus {
-  mode: 'encryption' | 'fallback';
+  mode: 'encryption';
   available: boolean;
   platform?: 'linux' | 'darwin' | 'win32' | 'other';
 }
@@ -27,8 +27,8 @@ export function createSecrets(options: SecretsOptions = {}): Secrets {
 
   let store: Store<Record<string, string>> | undefined;
   let encryptionStatus: EncryptionStatus = {
-    mode: 'fallback',
-    available: false,
+    mode: 'encryption',
+    available: true,
   };
   let initialized = false;
 
@@ -43,20 +43,19 @@ export function createSecrets(options: SecretsOptions = {}): Secrets {
     if (initialized) return;
     initialized = true;
 
-    try {
-      const available = safeStorage.isEncryptionAvailable();
-      encryptionStatus = {
-        mode: available ? 'encryption' : 'fallback',
-        available,
-        platform: getPlatform(),
-      };
-    } catch {
-      encryptionStatus = {
-        mode: 'fallback',
-        available: false,
-        platform: getPlatform(),
-      };
+    const available = safeStorage.isEncryptionAvailable();
+    if (!available) {
+      throw new Error(
+        `Secure storage is not available on this platform (${getPlatform()}). ` +
+          'Secrets cannot be stored securely. Please enable disk encryption or use a supported platform.',
+      );
     }
+
+    encryptionStatus = {
+      mode: 'encryption',
+      available: true,
+      platform: getPlatform(),
+    };
   }
 
   function getPlatform(): EncryptionStatus['platform'] {
@@ -68,26 +67,18 @@ export function createSecrets(options: SecretsOptions = {}): Secrets {
 
   function encryptString(plainText: string): string {
     initialize();
-    if (encryptionStatus.mode === 'encryption') {
-      try {
-        const encrypted = safeStorage.encryptString(plainText);
-        return encrypted.toString('base64');
-      } catch {
-        throw new Error('Encryption failed');
-      }
+    try {
+      const encrypted = safeStorage.encryptString(plainText);
+      return encrypted.toString('base64');
+    } catch (error) {
+      throw new Error(`Encryption failed: ${error}`);
     }
-
-    return Buffer.from(plainText, 'utf-8').toString('base64');
   }
 
   function decryptString(encryptedText: string): string {
     initialize();
-    if (encryptionStatus.mode === 'encryption') {
-      const buffer = Buffer.from(encryptedText, 'base64');
-      return safeStorage.decryptString(buffer);
-    }
-
-    return Buffer.from(encryptedText, 'base64').toString('utf-8');
+    const buffer = Buffer.from(encryptedText, 'base64');
+    return safeStorage.decryptString(buffer);
   }
 
   const secrets: Secrets = {

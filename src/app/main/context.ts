@@ -114,3 +114,19 @@ export function getRuntimeContext(): MainContext {
 export function setRuntimeContext(context: MainContext): void {
   _runtimeContext = context;
 }
+
+export async function closeContext(): Promise<void> {
+  if (!_runtimeContext) return;
+
+  const { db, ai } = _runtimeContext;
+
+  if (ai && typeof ai.close === 'function') {
+    await ai.close();
+  }
+
+  if (db) {
+    await db.close?.();
+  }
+
+  _runtimeContext = undefined;
+}
