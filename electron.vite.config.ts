@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'electron-vite';
 
@@ -58,6 +59,11 @@ export default defineConfig({
     plugins: [
       react(),
       tailwindcss(),
+      tanstackRouter({
+        target: 'react',
+        routesDirectory: './routes',
+        generatedRouteTree: './routeTree.gen.ts',
+      }),
       {
         name: 'html-csp-transform',
         transformIndexHtml(html): string {

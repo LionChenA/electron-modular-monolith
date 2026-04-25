@@ -14,7 +14,8 @@
       "*.config.mts",
       "electron.vite.config.ts",
       ".vscode/*.json"
-    ]
+    ],
+    "experimentalScannerIgnores": ["**/test/mocks/gen/**"]
   },
   "formatter": {
     "enabled": true,

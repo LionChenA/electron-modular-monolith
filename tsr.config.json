@@ -1,0 +1,5 @@
+{
+  "routesDirectory": "./src/app/renderer",
+  "generatedRouteTree": "./src/app/renderer/routeTree.gen.ts",
+  "virtualRouteConfig": "./src/app/renderer/routes.ts"
+}

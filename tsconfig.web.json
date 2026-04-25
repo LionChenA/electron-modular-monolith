@@ -9,6 +9,7 @@
     "src/features/*/shared/**/*",
     "src/shared/**/*"
   ],
+  "exclude": ["src/**/*.stories.tsx", "src/**/*.stories.mdx"],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
