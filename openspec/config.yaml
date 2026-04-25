@@ -1,0 +1,38 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  Project: Electron Modular Monolith
+  Description: An Electron application with React and TypeScript using a Modular Monolith architecture.
+
+  Tech Stack:
+    - Runtime: Electron, Node.js
+    - Framework: React 19, TypeScript
+    - Build: Vite, Electron-Vite, electron-builder
+    - Styling: TailwindCSS v4, Shadcn UI, Lucide React, clsx, tailwind-merge
+    - State & Routing: TanStack Query, TanStack Router
+    - Communication: @orpc (Type-safe RPC)
+    - Validation: Zod
+    - Code Quality: Biome (Linter/Formatter)
+
+  Architecture:
+    - Modular Monolith (Vertical Slices)
+    - `src/app`: Infrastructure (Main process, Preload, Renderer shell)
+    - `src/features`: Business logic organized by domain
+    - `src/shared`: Utilities, types, constants (No feature dependencies)
+
+  Conventions:
+    - Package Manager: pnpm
+    - CSS: Utility-first (Tailwind), strict separation of concerns
+    - Components: Functional, Hook-based
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+rules:
+  proposal:
+    - Focus on architectural impact and module boundaries
+    - Define clear strict types for RPC interfaces
+  tasks:
+    - Break down by feature slice
