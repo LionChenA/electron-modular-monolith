@@ -13,9 +13,9 @@
       "*.config.ts",
       "*.config.mts",
       "electron.vite.config.ts",
-      ".vscode/*.json"
-    ],
-    "experimentalScannerIgnores": ["**/test/mocks/gen/**"]
+      ".vscode/*.json",
+      "!!**/test/mocks/gen"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -98,6 +98,16 @@
         "rules": {
           "correctness": {
             "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/routeTree.gen.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
           }
         }
       }

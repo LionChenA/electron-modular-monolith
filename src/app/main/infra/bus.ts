@@ -18,7 +18,7 @@ export const bus = {
           return Promise.resolve({ value: undefined, done: true });
         }
         return new Promise<IteratorResult<T>>((resolve) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // biome-ignore lint/suspicious/noExplicitAny: EventEmitter.emit passes dynamic args
           const listener = (...args: any[]) => {
             resolve({ value: args[0] as T, done: false });
           };

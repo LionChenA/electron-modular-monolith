@@ -32,9 +32,9 @@ export function createPreferences(options: PreferencesOptions = {}): Preferences
     return store;
   }
 
-  const preferences: Preferences = {
+  const _preferences: Preferences = {
     get<T = unknown>(key: string, defaultValue?: T): T | undefined {
-      if (arguments.length > 1) {
+      if (defaultValue !== undefined) {
         return getStore().get(key, defaultValue) as T;
       }
       return getStore().get(key) as T | undefined;
@@ -73,7 +73,7 @@ export function createPreferences(options: PreferencesOptions = {}): Preferences
     },
   };
 
-  return preferences;
+  return _preferences;
 }
 
 export const preferences = createPreferences();
