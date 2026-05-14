@@ -43,6 +43,24 @@ All cross-process communication MUST be defined by a shared contract before impl
 - **THEN** a Zod schema MUST be defined in `shared/contract.ts` first
 - **AND** both Main and Renderer implementations MUST rely on this shared schema
 
+#### Scenario: Schema Definition
+- **WHEN** defining data models (types used across procedures)
+- **THEN** the schema MUST be defined in `shared/contract.ts`
+- **AND** the router implementation MUST import from contract (not redefine)
+- **AND** shared types MUST be exported for renderer consumption
+
+#### Scenario: EventBus Interface Definition
+- **WHEN** defining cross-process event communication
+- **THEN** the interface MUST be declared in `src/shared/interfaces/`
+- **AND** the implementation MUST be in `src/app/main/infra/`
+- **AND** the exported type MUST be the interface (not implementation typeof)
+
+#### Scenario: Storage Abstraction Initialization
+- **WHEN** creating infrastructure storage modules
+- **THEN** all storage types MUST use consistent initialization pattern
+- **AND** lazy initialization via factory getter functions (e.g., `getPreferences()`) MUST be used
+- **AND** async storage (sqlite, orama) MUST return Promises while sync storage (preferences, secrets) returns directly
+
 ### Requirement: Virtual File-Based Routing
 The application MUST use a virtual file-based routing system to decouple URL structure from the physical file structure.
 

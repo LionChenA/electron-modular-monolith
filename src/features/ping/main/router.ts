@@ -1,12 +1,6 @@
 import { z } from 'zod';
 import { procedure } from '../../../app/main/orpc';
-
-const pingRecordSchema = z.object({
-  id: z.string(),
-  message: z.string(),
-  timestamp: z.number(),
-  count: z.number().optional(),
-});
+import { type PingRecord, pingRecordSchema } from '../shared/contract';
 
 export const pingRouter = procedure.router({
   sendPing: procedure.input(z.void()).handler(async ({ context }) => {
@@ -83,12 +77,7 @@ export const pingRouter = procedure.router({
       }),
     )
     .handler(async ({ context, input }) => {
-      const result = await context.ai.search<{
-        id: string;
-        message: string;
-        timestamp: number;
-        count?: number;
-      }>({
+      const result = await context.ai.search<PingRecord>({
         term: input.term,
         limit: input.limit ?? 10,
       });

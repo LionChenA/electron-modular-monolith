@@ -2,7 +2,7 @@ import { oc } from '@orpc/contract';
 import { eventIterator } from '@orpc/server';
 import { z } from 'zod';
 
-const pingRecordSchema = z.object({
+export const pingRecordSchema = z.object({
   id: z.string(),
   message: z.string(),
   timestamp: z.number(),
