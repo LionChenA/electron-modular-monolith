@@ -13,6 +13,7 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@app/renderer/*": ["src/app/renderer/*"],

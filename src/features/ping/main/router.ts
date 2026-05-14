@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { procedure } from '../../../app/main/orpc';
-import { type PingRecord, pingRecordSchema } from '../shared/contract';
+import { pingRecordSchema } from '../shared/contract';
 
 export const pingRouter = procedure.router({
   sendPing: procedure.input(z.void()).handler(async ({ context }) => {
@@ -67,7 +67,15 @@ export const pingRouter = procedure.router({
     }));
   }),
   indexPing: procedure.input(pingRecordSchema).handler(async ({ context, input }) => {
-    await context.ai.insert(input);
+    const document = {
+      id: input.id,
+      title: input.message.slice(0, 50),
+      content: input.message,
+      type: 'ping' as const,
+      createdAt: input.timestamp,
+      updatedAt: input.timestamp,
+    };
+    await context.ai.insert(document);
   }),
   searchPings: procedure
     .input(
@@ -77,7 +85,7 @@ export const pingRouter = procedure.router({
       }),
     )
     .handler(async ({ context, input }) => {
-      const result = await context.ai.search<PingRecord>({
+      const result = await context.ai.search({
         term: input.term,
         limit: input.limit ?? 10,
       });

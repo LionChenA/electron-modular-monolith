@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('ORPC Client', () => {
-  const originalNodeEnv = process.env.NODE_ENV;
+  const originalMode = import.meta.env.MODE;
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalNodeEnv;
+    import.meta.env.MODE = originalMode;
   });
 
   describe('transport switching', () => {
-    it('uses HTTPRPCLink when NODE_ENV=test', async () => {
-      process.env.NODE_ENV = 'test';
+    it('uses HTTPRPCLink when MODE=test', async () => {
+      import.meta.env.MODE = 'test';
 
       const { RPCLink: HTTPRPCLink } = await import('@orpc/client/fetch');
 
@@ -23,7 +23,7 @@ describe('ORPC Client', () => {
     });
 
     it('creates HTTPRPCLink with correct url in test environment', async () => {
-      process.env.NODE_ENV = 'test';
+      import.meta.env.MODE = 'test';
 
       const { RPCLink: HTTPRPCLink } = await import('@orpc/client/fetch');
 
@@ -35,29 +35,24 @@ describe('ORPC Client', () => {
 
   describe('link type detection', () => {
     it('detects test environment correctly', () => {
-      process.env.NODE_ENV = 'test';
-      expect(process.env.NODE_ENV).toBe('test');
+      import.meta.env.MODE = 'test';
+      expect(import.meta.env.MODE).toBe('test');
     });
 
     it('detects development environment correctly', () => {
-      process.env.NODE_ENV = 'development';
-      expect(process.env.NODE_ENV).toBe('development');
+      import.meta.env.MODE = 'development';
+      expect(import.meta.env.MODE).toBe('development');
     });
 
     it('detects production environment correctly', () => {
-      process.env.NODE_ENV = 'production';
-      expect(process.env.NODE_ENV).toBe('production');
-    });
-
-    it('handles undefined NODE_ENV', () => {
-      delete process.env.NODE_ENV;
-      expect(process.env.NODE_ENV).toBeUndefined();
+      import.meta.env.MODE = 'production';
+      expect(import.meta.env.MODE).toBe('production');
     });
   });
 
   describe('MessageChannel creation', () => {
     it('creates MessageChannel for non-test environments', () => {
-      process.env.NODE_ENV = 'development';
+      import.meta.env.MODE = 'development';
 
       const channel = new MessageChannel();
       expect(channel.port1).toBeDefined();
@@ -72,20 +67,20 @@ describe('ORPC Client', () => {
 
   describe('transport decision logic', () => {
     it('returns true for test environment check', () => {
-      process.env.NODE_ENV = 'test';
-      const isTest = process.env.NODE_ENV === 'test';
+      import.meta.env.MODE = 'test';
+      const isTest = import.meta.env.MODE === 'test';
       expect(isTest).toBe(true);
     });
 
     it('returns false for development environment check', () => {
-      process.env.NODE_ENV = 'development';
-      const isTest = process.env.NODE_ENV === 'test';
+      import.meta.env.MODE = 'development';
+      const isTest = import.meta.env.MODE === 'test';
       expect(isTest).toBe(false);
     });
 
     it('returns false for production environment check', () => {
-      process.env.NODE_ENV = 'production';
-      const isTest = process.env.NODE_ENV === 'test';
+      import.meta.env.MODE = 'production';
+      const isTest = import.meta.env.MODE === 'test';
       expect(isTest).toBe(false);
     });
   });

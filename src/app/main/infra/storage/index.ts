@@ -1,18 +1,20 @@
 export {
   type CreateOramaOptions,
   createOrama,
+  DEFAULT_SEARCH_SCHEMA,
   type ISearchEngine,
   type OramaSchema,
+  type SearchDocument,
   type SearchParams,
   type SearchResult,
 } from './orama';
 export {
   createPreferences,
+  getPreferences,
   type Preferences,
   type PreferencesOptions,
-  preferences,
 } from './preferences';
-export { createSecrets, type Secrets, type SecretsOptions, secrets } from './secrets';
+export { createSecrets, getSecrets, type Secrets, type SecretsOptions } from './secrets';
 export {
   BetterSqliteAdapter,
   type CreateSqliteOptions,

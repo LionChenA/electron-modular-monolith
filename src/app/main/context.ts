@@ -2,16 +2,16 @@ import * as path from 'node:path';
 import { app } from 'electron';
 import { bus } from './infra/bus';
 import {
-  type CreateOramaOptions,
   type CreateSqliteOptions,
   createOrama,
   createSqlite,
+  DEFAULT_SEARCH_SCHEMA,
+  getPreferences,
+  getSecrets,
   type IDatabase,
   type ISearchEngine,
   type Preferences,
-  preferences,
   type Secrets,
-  secrets as secretsStore,
 } from './infra/storage';
 
 /**
@@ -47,21 +47,13 @@ async function createDatabase(): Promise<IDatabase> {
  * Create the search engine instance.
  */
 async function createSearchEngine(): Promise<ISearchEngine> {
-  const options: CreateOramaOptions = {
-    schema: {
-      id: 'string',
-      title: 'string',
-      content: 'string',
-      type: 'string',
-      createdAt: 'number',
-      updatedAt: 'number',
-    },
+  return createOrama({
+    schema: DEFAULT_SEARCH_SCHEMA,
     persistence: {
       filePath: path.join(getUserDataPath(), 'search-index.json'),
-      autoSaveInterval: 30000, // 30 seconds
+      autoSaveInterval: 30000,
     },
-  };
-  return createOrama(options);
+  });
 }
 
 /**
@@ -69,8 +61,8 @@ async function createSearchEngine(): Promise<ISearchEngine> {
  * This must be called after app is ready.
  */
 export async function initializeContext(): Promise<MainContext> {
-  const prefs = preferences;
-  const secrets = secretsStore;
+  const prefs = getPreferences();
+  const secrets = getSecrets();
 
   let db: IDatabase;
   let ai: ISearchEngine;
@@ -86,7 +78,8 @@ export async function initializeContext(): Promise<MainContext> {
     ai = await createSearchEngine();
   } catch (error) {
     console.error('[context] Failed to initialize search engine:', error);
-    throw new Error('Search engine initialization failed');
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Search engine initialization failed: ${message}`);
   }
 
   return {

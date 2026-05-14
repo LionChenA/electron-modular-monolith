@@ -75,11 +75,21 @@ vi.mock('electron', () => ({
 
 vi.mock('./infra/storage', () => ({
   preferences: mocks.mockPrefs,
+  getPreferences: () => mocks.mockPrefs,
   secrets: mocks.mockSecrets,
+  getSecrets: () => mocks.mockSecrets,
   createSqlite: vi.fn().mockResolvedValue(mocks.mockDb),
   createOrama: vi.fn().mockResolvedValue(mocks.mockAi),
   db: mocks.mockDb,
   ai: mocks.mockAi,
+  DEFAULT_SEARCH_SCHEMA: {
+    id: 'string',
+    title: 'string',
+    content: 'string',
+    type: 'string',
+    createdAt: 'number',
+    updatedAt: 'number',
+  },
 }));
 
 vi.mock('./infra/bus', () => ({

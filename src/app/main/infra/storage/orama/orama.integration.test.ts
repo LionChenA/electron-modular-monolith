@@ -46,7 +46,7 @@ describe('Orama integration (real file-backed storage)', () => {
     await orama.insert({ name: 'Alice Smith', age: 30, email: 'alice@example.com' });
     await orama.insert({ name: 'Bob Jones', age: 25, email: 'bob@example.com' });
 
-    const result = await orama.search<{ name: string }>({ term: 'Alice' });
+    const result = await orama.search({ term: 'Alice' });
 
     expect(result.count).toBe(1);
     expect(result.hits[0].document.name).toBe('Alice Smith');
@@ -56,7 +56,7 @@ describe('Orama integration (real file-backed storage)', () => {
     const id = await orama.insert({ name: 'Alice', age: 30, email: 'alice@example.com' });
     await orama.update(id, { name: 'Alice Updated', age: 31, email: 'alice.updated@example.com' });
 
-    const result = await orama.search<{ name: string; age: number }>({ term: 'Updated' });
+    const result = await orama.search({ term: 'Updated' });
 
     expect(result.count).toBe(1);
     expect(result.hits[0].document).toMatchObject({ name: 'Alice Updated', age: 31 });

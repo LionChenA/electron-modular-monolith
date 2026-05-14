@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(review)",
+      "mcp__ide__getDiagnostics",
+      "Bash(pnpm test:*)",
+      "Bash(ctx7 library:*)",
+      "Bash(ctx7 docs:*)",
+      "WebSearch",
+      "Bash(gh search:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

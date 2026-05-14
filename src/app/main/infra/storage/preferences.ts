@@ -76,4 +76,13 @@ export function createPreferences(options: PreferencesOptions = {}): Preferences
   return _preferences;
 }
 
+let _instance: Preferences | undefined;
+
+export function getPreferences(): Preferences {
+  if (!_instance) {
+    _instance = createPreferences();
+  }
+  return _instance;
+}
+
 export const preferences = createPreferences();

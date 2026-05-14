@@ -11,6 +11,7 @@
   "compilerOptions": {
     "composite": true,
     "types": ["electron-vite/node"],
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@app/main/*": ["src/app/main/*"],

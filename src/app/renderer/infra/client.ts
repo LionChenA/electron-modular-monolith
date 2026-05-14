@@ -12,7 +12,7 @@ import { pingContract } from '../../../features/ping/shared/contract';
  * - Test: HTTPRPCLink over HTTP (for MSW interception)
  */
 const link =
-  process.env.NODE_ENV === 'test'
+  import.meta.env.MODE === 'test'
     ? new HTTPRPCLink({
         url: 'http://localhost/rpc',
       })

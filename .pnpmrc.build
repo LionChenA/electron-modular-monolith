@@ -1,0 +1,1 @@
+{"onlyBuiltDependencies":["electron","esbuild","better-sqlite3","@fission-ai/openspec","msw","electron-winstaller","es5-ext"]} 허용

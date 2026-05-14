@@ -130,4 +130,13 @@ export function createSecrets(options: SecretsOptions = {}): Secrets {
   return secrets;
 }
 
+let _instance: Secrets | undefined;
+
+export function getSecrets(): Secrets {
+  if (!_instance) {
+    _instance = createSecrets();
+  }
+  return _instance;
+}
+
 export const secrets = createSecrets();

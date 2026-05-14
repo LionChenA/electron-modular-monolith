@@ -17,6 +17,16 @@ import type {
   SearchResult,
 } from './types';
 
+export type {
+  CreateOramaOptions,
+  ISearchEngine,
+  OramaSchema,
+  SearchDocument,
+  SearchParams,
+  SearchResult,
+} from './types';
+export { DEFAULT_SEARCH_SCHEMA } from './types';
+
 let autoSaveInterval: ReturnType<typeof setInterval> | null = null;
 
 export async function createOrama(options: CreateOramaOptions): Promise<ISearchEngine> {
@@ -91,19 +101,19 @@ class OramaService implements ISearchEngine {
     this.persistence = persistence;
   }
 
-  async insert<T = Record<string, unknown>>(document: T): Promise<string> {
+  async insert(document: Record<string, unknown>): Promise<string> {
     this.ensureNotClosed();
-    return insert(this.db, document as Record<string, unknown>);
+    return insert(this.db, document);
   }
 
-  async insertMany<T = Record<string, unknown>>(documents: T[]): Promise<string[]> {
+  async insertMany(documents: Record<string, unknown>[]): Promise<string[]> {
     this.ensureNotClosed();
-    return insertMultiple(this.db, documents as Record<string, unknown>[]);
+    return insertMultiple(this.db, documents);
   }
 
-  async update<T = Record<string, unknown>>(id: string, document: T): Promise<void> {
+  async update(id: string, document: Record<string, unknown>): Promise<void> {
     this.ensureNotClosed();
-    await update(this.db, id, document as Record<string, unknown>);
+    await update(this.db, id, document);
   }
 
   async remove(id: string): Promise<void> {
@@ -111,7 +121,7 @@ class OramaService implements ISearchEngine {
     await remove(this.db, id);
   }
 
-  async search<T = Record<string, unknown>>(params: SearchParams): Promise<SearchResult<T>> {
+  async search(params: SearchParams): Promise<SearchResult<Record<string, unknown>>> {
     this.ensureNotClosed();
     const searchParams: Record<string, unknown> = {
       limit: params.limit ?? 10,
@@ -147,58 +157,10 @@ class OramaService implements ISearchEngine {
       hits: result.hits.map((hit) => ({
         id: hit.id,
         score: hit.score,
-        document: hit.document as T,
+        document: hit.document,
       })),
       count: result.count,
     };
-  }
-
-  async searchVector<T = Record<string, unknown>>(
-    vector: number[],
-    property: string,
-    options?: {
-      similarity?: number;
-      limit?: number;
-      offset?: number;
-      where?: Record<string, unknown>;
-    },
-  ): Promise<SearchResult<T>> {
-    return this.search<T>({
-      mode: 'vector',
-      vector: {
-        value: vector,
-        property: property,
-      },
-      similarity: options?.similarity,
-      limit: options?.limit ?? 10,
-      offset: options?.offset ?? 0,
-      where: options?.where,
-    });
-  }
-
-  async searchHybrid<T = Record<string, unknown>>(
-    term: string,
-    vector: number[],
-    vectorProperty: string,
-    options?: {
-      similarity?: number;
-      limit?: number;
-      offset?: number;
-      where?: Record<string, unknown>;
-    },
-  ): Promise<SearchResult<T>> {
-    return this.search<T>({
-      term: term,
-      mode: 'hybrid',
-      vector: {
-        value: vector,
-        property: vectorProperty,
-      },
-      similarity: options?.similarity,
-      limit: options?.limit ?? 10,
-      offset: options?.offset ?? 0,
-      where: options?.where,
-    });
   }
 
   async save(): Promise<void> {
@@ -245,17 +207,53 @@ class OramaService implements ISearchEngine {
     return this.db;
   }
 
+  async searchVector(
+    vector: number[],
+    property: string,
+    options?: {
+      similarity?: number;
+      limit?: number;
+      offset?: number;
+      where?: Record<string, unknown>;
+    },
+  ): Promise<SearchResult<Record<string, unknown>>> {
+    this.ensureNotClosed();
+    return this.search({
+      vector: { value: vector, property },
+      mode: 'vector',
+      similarity: options?.similarity,
+      limit: options?.limit,
+      offset: options?.offset,
+      where: options?.where,
+    });
+  }
+
+  async searchHybrid(
+    term: string,
+    vector: number[],
+    vectorProperty: string,
+    options?: {
+      similarity?: number;
+      limit?: number;
+      offset?: number;
+      where?: Record<string, unknown>;
+    },
+  ): Promise<SearchResult<Record<string, unknown>>> {
+    this.ensureNotClosed();
+    return this.search({
+      term,
+      vector: { value: vector, property: vectorProperty },
+      mode: 'hybrid',
+      similarity: options?.similarity,
+      limit: options?.limit,
+      offset: options?.offset,
+      where: options?.where,
+    });
+  }
+
   private ensureNotClosed(): void {
     if (this.closed) {
       throw new Error('Orama search engine has been closed');
     }
   }
 }
-
-export type {
-  CreateOramaOptions,
-  ISearchEngine,
-  OramaSchema,
-  SearchParams,
-  SearchResult,
-} from './types';

@@ -2,8 +2,27 @@ import type { SearchableType } from '@orama/orama';
 
 export type SearchAlgorithm = 'bm25' | 'qps' | 'pt15';
 
+export interface SearchDocument {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  createdAt: number;
+  updatedAt: number;
+  [key: string]: string | number | boolean | null | undefined;
+}
+
 export type OramaSchema = {
   [key: string]: SearchableType | OramaSchema | OramaSchema[];
+};
+
+export const DEFAULT_SEARCH_SCHEMA: OramaSchema = {
+  id: 'string',
+  title: 'string',
+  content: 'string',
+  type: 'string',
+  createdAt: 'number',
+  updatedAt: 'number',
 };
 
 export interface SearchParams {
@@ -45,12 +64,12 @@ export interface CreateOramaOptions {
 }
 
 export interface ISearchEngine {
-  insert<T = Record<string, unknown>>(document: T): Promise<string>;
-  insertMany<T = Record<string, unknown>>(documents: T[]): Promise<string[]>;
-  update<T = Record<string, unknown>>(id: string, document: T): Promise<void>;
+  insert(document: Record<string, unknown>): Promise<string>;
+  insertMany(documents: Record<string, unknown>[]): Promise<string[]>;
+  update(id: string, document: Record<string, unknown>): Promise<void>;
   remove(id: string): Promise<void>;
-  search<T = Record<string, unknown>>(params: SearchParams): Promise<SearchResult<T>>;
-  searchVector<T = Record<string, unknown>>(
+  search(params: SearchParams): Promise<SearchResult<Record<string, unknown>>>;
+  searchVector(
     vector: number[],
     property: string,
     options?: {
@@ -59,8 +78,8 @@ export interface ISearchEngine {
       offset?: number;
       where?: Record<string, unknown>;
     },
-  ): Promise<SearchResult<T>>;
-  searchHybrid<T = Record<string, unknown>>(
+  ): Promise<SearchResult<Record<string, unknown>>>;
+  searchHybrid(
     term: string,
     vector: number[],
     vectorProperty: string,
@@ -70,7 +89,7 @@ export interface ISearchEngine {
       offset?: number;
       where?: Record<string, unknown>;
     },
-  ): Promise<SearchResult<T>>;
+  ): Promise<SearchResult<Record<string, unknown>>>;
   save(): Promise<void>;
   close(): Promise<void>;
   getInternalDb(): unknown;
