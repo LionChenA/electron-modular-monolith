@@ -187,7 +187,14 @@ describe('Ping Integration (ORPC call)', () => {
       await call(pingRouter.indexPing, pingRecord, {
         context: mockContext as any,
       });
-      expect(mockContext.ai.insert).toHaveBeenCalledWith(pingRecord);
+      expect(mockContext.ai.insert).toHaveBeenCalledWith({
+        id: '1',
+        title: 'test',
+        content: 'test',
+        type: 'ping',
+        createdAt: 1000,
+        updatedAt: 1000,
+      });
     });
   });
 
