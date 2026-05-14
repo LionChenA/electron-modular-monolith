@@ -4,7 +4,44 @@
 
 Define requirements for end-to-end testing using Playwright.
 
-## ADDED Requirements
+## Requirements
+
+### Requirement: App Startup Test
+
+The application SHALL have a basic E2E test that verifies successful startup.
+
+#### Scenario: App window opens successfully
+- **WHEN** The Electron app is launched
+- **THEN** A window is created and visible
+- **AND** No JavaScript errors occur in the main process
+
+#### Scenario: App renders without errors
+- **WHEN** The Electron app is launched
+- **THEN** The renderer process loads without console errors
+- **AND** The page content is visible
+
+### Requirement: Routing Test
+
+The application SHALL have E2E tests that verify basic routing works.
+
+#### Scenario: Default route loads
+- **WHEN** The app opens the default route
+- **THEN** The correct page component is rendered
+
+#### Scenario: Route navigation works
+- **WHEN** Navigation to a different route occurs
+- **THEN** The URL changes to the expected route
+- **AND** The correct page component is rendered
+
+### Requirement: Minimal Coverage
+
+E2E tests SHALL focus on critical paths only.
+
+#### Scenario: E2E tests are limited in scope
+- **WHEN** Planning E2E test coverage
+- **THEN** Focus on: app startup, window creation, initial render
+- **AND** Do NOT test every user interaction or workflow
+- **AND** Leave detailed interaction tests to integration tests
 
 ### Requirement: Playwright Installation and Configuration
 The project SHALL have Playwright installed and configured for E2E testing.
@@ -29,11 +66,18 @@ Playwright SHALL be configured to work with the Electron application.
 - **THEN** These tests are excluded from Vitest via configuration
 
 ### Requirement: E2E Test Execution
-E2E tests SHALL be executable via npm scripts.
+
+E2E tests SHALL be executable via npm scripts and CI/CD pipelines.
 
 #### Scenario: pnpm test:e2e runs Playwright tests
-- **WHEN** `pnpm test:e2e` command is executed
+- **WHEN** `pnpm test:e2e` is executed
 - **THEN** Playwright discovers and runs E2E tests
+- **AND** Tests run against the built application
+
+#### Scenario: E2E tests work in CI
+- **WHEN** E2E tests run in a CI environment
+- **THEN** They use headless browser mode
+- **AND** They handle environment-specific configurations
 
 #### Scenario: pnpm test:all runs all tests
 - **WHEN** `pnpm test:all` command is executed
@@ -47,15 +91,18 @@ E2E tests SHALL follow the naming pattern `{name}.e2e.test.ts`.
 - **THEN** Playwright discovers and runs these tests
 
 ### Requirement: E2E Testing Scope
+
 E2E tests SHALL focus on critical user workflows and interactions.
 
 #### Scenario: E2E tests cover core infrastructure
 - **WHEN** E2E tests are written
 - **THEN** They SHOULD focus on core features: storage, IPC, routing
 
-#### Scenario: E2E tests do not test every UI component
+#### Scenario: E2E tests are limited in scope
 - **WHEN** Planning E2E test coverage
-- **THEN** UI showcase and demo components are lower priority
+- **THEN** Focus on: app startup, window creation, initial render
+- **AND** Do NOT test every user interaction or workflow
+- **AND** Leave detailed interaction tests to integration tests
 
 ### Requirement: Namespace Isolation Between Test Runners
 Vitest and Playwright SHALL NOT interfere with each other's global APIs.

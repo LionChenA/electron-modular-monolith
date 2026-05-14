@@ -4,7 +4,16 @@
 
 Define requirements for unit and integration testing infrastructure using Vitest.
 
-## ADDED Requirements
+Unit test content (what to test) is defined in `specs/unit_testing/spec.md`.
+Integration test content (what to test) is defined in `specs/integration_testing/spec.md`.
+
+## Related Specs
+
+- `specs/unit_testing/spec.md`
+- `specs/integration_testing/spec.md`
+- `specs/communication/spec.md`
+
+## Requirements
 
 ### Requirement: Vitest Installation and Configuration
 The project SHALL have Vitest installed as a dev dependency and properly configured to work with the electron-vite project structure.
