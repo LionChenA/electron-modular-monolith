@@ -1,0 +1,8 @@
+allowBuilds:
+  '@fission-ai/openspec': true
+  better-sqlite3: true
+  electron: true
+  electron-winstaller: true
+  es5-ext: true
+  esbuild: true
+  msw: true
