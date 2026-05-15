@@ -22,12 +22,17 @@ const TAB_META: Record<TabId, { label: string; icon: React.ReactNode }> = {
 
 export function PingPage() {
   const [activeTab, setActiveTab] = useState<TabId>('preferences');
+  const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
 
   // --- Queries ---
   const prefsQuery = useQuery(orpc.ping.getAllPreferences.queryOptions());
   const keysQuery = useQuery(orpc.ping.listApiKeys.queryOptions());
   const historyQuery = useQuery(orpc.ping.getPingHistory.queryOptions());
+  const searchQuery = useQuery({
+    ...orpc.ping.searchPings.queryOptions({ input: { term: searchTerm } }),
+    enabled: searchTerm.length > 0,
+  });
 
   // --- Mutations: Preferences ---
   const setPref = useMutation({
@@ -103,6 +108,13 @@ export function PingPage() {
         case 'sqlite':
           savePing.mutate({ message: value, timestamp: Date.now() });
           break;
+        case 'search': {
+          const term = value.trim();
+          if (term.length > 0) {
+            setSearchTerm(term);
+          }
+          break;
+        }
       }
     },
     [activeTab, setPref, storeKey, savePing],
@@ -150,18 +162,33 @@ export function PingPage() {
       }))
     : [];
 
+  const searchItems: DataItem[] = searchQuery.data
+    ? searchQuery.data.map((r) => ({
+        id: r.id,
+        key: r.id,
+        value: r.message,
+      }))
+    : [];
+
   const tabData: Record<TabId, DataItem[]> = {
     preferences: prefItems,
     secrets: secretItems,
     sqlite: historyItems,
-    search: [],
+    search: searchItems,
   };
 
   const tabLoading: Record<TabId, boolean> = {
     preferences: prefsQuery.isLoading,
     secrets: keysQuery.isLoading,
     sqlite: historyQuery.isLoading,
-    search: false,
+    search: searchQuery.isFetching,
+  };
+
+  const tabError: Record<TabId, string | null> = {
+    preferences: prefsQuery.error?.message ?? null,
+    secrets: keysQuery.error?.message ?? null,
+    sqlite: historyQuery.error?.message ?? null,
+    search: searchQuery.error?.message ?? null,
   };
 
   return (
@@ -207,8 +234,8 @@ export function PingPage() {
                 {tabId === 'search' ? (
                   <ActionPanel
                     title='Search Orama'
-                    onAdd={() => {}}
-                    onDelete={() => {}}
+                    onAdd={handleAdd}
+                    onDelete={() => setSearchTerm('')}
                     showKeyField={false}
                     valuePlaceholder='Search indexed data...'
                   />
@@ -253,11 +280,15 @@ export function PingPage() {
                     tabId === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
                   }
                   emptyMessage={
-                    tabId === 'search'
-                      ? 'Enter a search term above'
+                    tabError[tabId]
+                      ? `Error: ${tabError[tabId]}`
                       : tabLoading[tabId]
                         ? 'Loading...'
-                        : 'No data — use the panel to add some'
+                        : tabId === 'search'
+                          ? searchTerm
+                            ? 'No matches found'
+                            : 'Enter a search term above'
+                          : 'No data — use the panel to add some'
                   }
                 />
               </div>
