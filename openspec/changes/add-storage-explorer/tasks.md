@@ -2,55 +2,57 @@
 
 ## 0. Prerequisites
 
-- [ ] 0.1 Verify shadcn CLI is v4: `pnpm dlx shadcn@latest --version`
-- [ ] 0.2 Verify shadcn skills are installed: check `.agents/skills/shadcn/`
+- [x] 0.1 Verify shadcn CLI is v4: verified local shadcn@4.7.0
+- [x] 0.2 Verify shadcn skills are installed: reinstalled from official source
 
 ## 1. Install Shadcn Components
 
 Based on new Left/Right split layout design:
 
-- [ ] 1.1 Install tabs component: `pnpm dlx shadcn@latest add tabs`
-- [ ] 1.2 Install card component: `pnpm dlx shadcn@latest add card` (already installed)
-- [ ] 1.3 Install input component: `pnpm dlx shadcn@latest add input`
-- [ ] 1.4 Install button component: `pnpm dlx shadcn@latest add button` (already installed)
-- [ ] 1.5 Install badge component: `pnpm dlx shadcn@latest add badge` (already installed)
-- [ ] 1.6 Install scroll-area component: `pnpm dlx shadcn@latest add scroll-area`
-- [ ] 1.7 Install sonner component: `pnpm dlx shadcn@latest add sonner`
-- [ ] 1.8 Install separator component: `pnpm dlx shadcn@latest add separator` (already installed)
+- [x] 1.1 Install tabs component: `pnpm shadcn add tabs`
+- [x] 1.2 Install card component: `pnpm shadcn add card` (already installed)
+- [x] 1.3 Install input component: `pnpm shadcn add input`
+- [x] 1.4 Install button component: `pnpm shadcn add button` (already installed)
+- [x] 1.5 Install badge component: `pnpm shadcn add badge` (already installed)
+- [x] 1.6 Install scroll-area component: `pnpm shadcn add scroll-area`
+- [x] 1.7 Install sonner component: `pnpm shadcn add sonner`
+- [x] 1.8 Install separator component: `pnpm shadcn add separator` (already installed)
 
 ## 2. Update Feature Structure (Modify Existing Ping Feature)
 
 Since this is a demo page, we can enhance the existing `ping` feature rather than creating a new one:
 
-- [ ] 2.1 Rename/update `src/features/ping/renderer/page.tsx` to new design
-- [ ] 2.2 Keep existing ORPC contracts (they already cover all 4 storage types)
-- [ ] 2.3 Update the page layout to Left/Right split
+- [x] 2.1 Update `src/features/ping/renderer/page.tsx` to tabbed left/right split layout
+- [x] 2.2 Keep existing ORPC contracts (they already cover all 4 storage types)
+- [x] 2.3 Update the page layout to Left/Right split
 
 ## 3. Create UI Components (Simplified)
 
 New simplified component structure based on left/right split:
 
-- [ ] 3.1 Update existing page to use Tabs layout
-- [ ] 3.2 Create ActionPanel component (left side - form inputs + buttons)
-- [ ] 3.3 Create DataList component (right side - data display)
-- [ ] 3.4 Create EmptyState component
-- [ ] 3.5 Create SecretCell component (masked display with reveal)
-- [ ] 3.6 Integrate Sonner for toast notifications
+- [x] 3.1 Update existing page to use Tabs layout
+- [x] 3.2 Create ActionPanel component (left side - form inputs + buttons)
+- [x] 3.3 Create DataList component (right side - data display)
+- [x] 3.4 Create EmptyState component
+- [x] 3.5 Create SecretCell component (masked display with reveal)
+- [x] 3.6 Integrate Sonner for toast notifications
 
-## 4. Implement ORPC Procedures (Already Done)
+## 4. ORPC Procedures
 
-The ping feature already has all required procedures:
+The existing ORPC contract and router already include all CRUD operations:
 
-- [ ] 4.1 getAllPreferences / setPreference / deletePreference
-- [ ] 4.2 listApiKeys / storeApiKey / deleteApiKey
-- [ ] 4.3 getPingHistory / savePingToDb / deletePing
-- [ ] 4.4 searchPings (Orama full-text search)
+- [x] 4.1 getAllPreferences / setPreference / deletePreference
+- [x] 4.2 listApiKeys / storeApiKey / deleteApiKey
+- [x] 4.3 getPingHistory / savePingToDb / deletePing
+- [x] 4.4 searchPings (Orama full-text search)
 
-## 5. Implement New Features
+## 5. Delete Procedures (Backend)
 
-- [ ] 5.1 Add delete preference procedure
-- [ ] 5.2 Add delete API key procedure
-- [ ] 5.3 Add delete ping procedure
+Added delete endpoints to ORPC contract and router:
+
+- [x] 5.1 Add delete preference procedure
+- [x] 5.2 Add delete API key procedure
+- [x] 5.3 Add delete ping procedure
 
 ## 6. Integration
 

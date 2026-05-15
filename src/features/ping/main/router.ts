@@ -91,4 +91,17 @@ export const pingRouter = procedure.router({
       });
       return result.hits.map((hit) => hit.document);
     }),
+  deletePreference: procedure
+    .input(z.object({ key: z.string() }))
+    .handler(async ({ context, input }) => {
+      context.prefs.delete(input.key);
+    }),
+  deleteApiKey: procedure
+    .input(z.object({ key: z.string() }))
+    .handler(async ({ context, input }) => {
+      context.secrets.delete(input.key);
+    }),
+  deletePing: procedure.input(z.object({ id: z.string() })).handler(async ({ context, input }) => {
+    context.db.delete('pings', { id: Number(input.id) });
+  }),
 });

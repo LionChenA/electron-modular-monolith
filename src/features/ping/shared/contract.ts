@@ -39,4 +39,7 @@ export const pingContract = {
       }),
     )
     .output(z.array(pingRecordSchema)),
+  deletePreference: oc.input(z.object({ key: z.string() })).output(z.void()),
+  deleteApiKey: oc.input(z.object({ key: z.string() })).output(z.void()),
+  deletePing: oc.input(z.object({ id: z.string() })).output(z.void()),
 };
