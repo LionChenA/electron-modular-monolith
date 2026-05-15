@@ -11,6 +11,22 @@ This project uses a layered feedback pipeline:
 修改代码 → pnpm test:smoke → agent-browser 视觉验证 → 最终检查
 ```
 
+## Shadcn Component Management
+
+This project has `shadcn` as a local dependency (currently ^4.7.0). When adding or updating shadcn/ui components:
+
+- **ALWAYS use `pnpm shadcn add`** (project-local CLI), **NOT `pnpm dlx shadcn@latest add`**
+- Using `pnpm shadcn` ensures the CLI version matches the project's lockfile
+- `pnpm dlx` bypasses lockfile and caused the structural mismatch issue previously
+
+```bash
+# ✅ CORRECT: uses project-local version
+pnpm shadcn add tabs input button
+
+# ❌ WRONG: bypasses project dependency management
+pnpm dlx shadcn@latest add tabs input button
+```
+
 ## Step 1: Smoke Test
 
 After every code change:
