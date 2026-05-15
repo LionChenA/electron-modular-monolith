@@ -1,8 +1,11 @@
 import { buttonVariants } from '@app/renderer/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@app/renderer/components/ui/tabs';
+import { orpc } from '@app/renderer/infra/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 import wavyLines from '../../../app/renderer/assets/wavy-lines.svg';
 import { ActionPanel } from './components/ActionPanel';
 import { type DataItem, DataList } from './components/DataList';
@@ -17,50 +20,149 @@ const TAB_META: Record<TabId, { label: string; icon: React.ReactNode }> = {
   search: { label: 'Search', icon: <SearchIcon /> },
 };
 
-// Phase 2: Static demo data — will be replaced by TanStack Query in Phase 3
-const DEMO_DATA: Record<TabId, DataItem[]> = {
-  preferences: [
-    { id: '1', key: 'theme', value: 'dark' },
-    { id: '2', key: 'language', value: 'en-US' },
-    { id: '3', key: 'notifications', value: 'true' },
-  ],
-  secrets: [
-    { id: '1', key: 'apiKey', value: 'sk-xxx...' },
-    { id: '2', key: 'dbPassword', value: 'p@ssw0rd' },
-    { id: '3', key: 'sessionToken', value: 'jwt-xxx...' },
-  ],
-  sqlite: [
-    { id: '1', key: 'ping-001', value: 'Hello at 1710000000' },
-    { id: '2', key: 'ping-002', value: 'Hello at 1710000001' },
-  ],
-  search: [],
-};
-
 export function PingPage() {
   const [activeTab, setActiveTab] = useState<TabId>('preferences');
-  const [editingItem, setEditingItem] = useState<DataItem | null>(null);
+  const queryClient = useQueryClient();
 
-  const handleAdd = useCallback(
-    (_key: string, _value: string) => {
-      // Phase 3: wire up ORPC mutation
-      console.log('add', activeTab, _key, _value);
+  // --- Queries ---
+  const prefsQuery = useQuery(orpc.ping.getAllPreferences.queryOptions());
+  const keysQuery = useQuery(orpc.ping.listApiKeys.queryOptions());
+  const historyQuery = useQuery(orpc.ping.getPingHistory.queryOptions());
+
+  // --- Mutations: Preferences ---
+  const setPref = useMutation({
+    ...orpc.ping.setPreferences.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: orpc.ping.getAllPreferences.queryOptions().queryKey,
+      });
+      toast.success('Preference saved');
     },
-    [activeTab],
+    onError: () => toast.error('Failed to save preference'),
+  });
+
+  const delPref = useMutation({
+    ...orpc.ping.deletePreference.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: orpc.ping.getAllPreferences.queryOptions().queryKey,
+      });
+      toast.success('Preference deleted');
+    },
+    onError: () => toast.error('Failed to delete preference'),
+  });
+
+  // --- Mutations: Secrets ---
+  const storeKey = useMutation({
+    ...orpc.ping.storeApiKey.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: orpc.ping.listApiKeys.queryOptions().queryKey });
+      toast.success('Secret saved');
+    },
+    onError: () => toast.error('Failed to save secret'),
+  });
+
+  const delKey = useMutation({
+    ...orpc.ping.deleteApiKey.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: orpc.ping.listApiKeys.queryOptions().queryKey });
+      toast.success('Secret deleted');
+    },
+    onError: () => toast.error('Failed to delete secret'),
+  });
+
+  // --- Mutations: SQLite ---
+  const savePing = useMutation({
+    ...orpc.ping.savePingToDb.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: orpc.ping.getPingHistory.queryOptions().queryKey });
+      toast.success('Ping saved');
+    },
+    onError: () => toast.error('Failed to save ping'),
+  });
+
+  const delPing = useMutation({
+    ...orpc.ping.deletePing.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: orpc.ping.getPingHistory.queryOptions().queryKey });
+      toast.success('Ping deleted');
+    },
+    onError: () => toast.error('Failed to delete ping'),
+  });
+
+  // --- Handlers ---
+  const handleAdd = useCallback(
+    (key: string, value: string) => {
+      switch (activeTab) {
+        case 'preferences':
+          setPref.mutate({ key, value });
+          break;
+        case 'secrets':
+          storeKey.mutate({ key, value });
+          break;
+        case 'sqlite':
+          savePing.mutate({ message: value, timestamp: Date.now() });
+          break;
+      }
+    },
+    [activeTab, setPref, storeKey, savePing],
   );
 
   const handleDelete = useCallback(
-    (_key: string) => {
-      // Phase 3: wire up ORPC mutation
-      console.log('delete', activeTab, _key);
+    (key: string) => {
+      switch (activeTab) {
+        case 'preferences':
+          delPref.mutate({ key });
+          break;
+        case 'secrets':
+          delKey.mutate({ key });
+          break;
+        case 'sqlite':
+          delPing.mutate({ id: key });
+          break;
+      }
     },
-    [activeTab],
+    [activeTab, delPref, delKey, delPing],
   );
 
-  const handleEdit = useCallback((item: DataItem) => {
-    setEditingItem(item);
-  }, []);
+  // --- Data mapping per tab ---
+  const prefItems: DataItem[] = prefsQuery.data
+    ? Object.entries(prefsQuery.data).map(([k, v], i) => ({
+        id: String(i),
+        key: k,
+        value: String(v ?? ''),
+      }))
+    : [];
 
-  const items = DEMO_DATA[activeTab];
+  const secretItems: DataItem[] = keysQuery.data
+    ? keysQuery.data.map((k) => ({
+        id: k,
+        key: k,
+        value: '',
+      }))
+    : [];
+
+  const historyItems: DataItem[] = historyQuery.data
+    ? historyQuery.data.map((r) => ({
+        id: r.id,
+        key: r.id,
+        value: r.message,
+      }))
+    : [];
+
+  const tabData: Record<TabId, DataItem[]> = {
+    preferences: prefItems,
+    secrets: secretItems,
+    sqlite: historyItems,
+    search: [],
+  };
+
+  const tabLoading: Record<TabId, boolean> = {
+    preferences: prefsQuery.isLoading,
+    secrets: keysQuery.isLoading,
+    sqlite: historyQuery.isLoading,
+    search: false,
+  };
 
   return (
     <div className='dark relative flex flex-col items-center min-h-screen bg-background font-sans text-foreground selection:bg-primary/20'>
@@ -71,7 +173,6 @@ export function PingPage() {
       />
 
       <div className='relative z-10 w-full max-w-5xl p-6 flex flex-col gap-4'>
-        {/* Header */}
         <div className='flex items-center justify-between'>
           <div>
             <h1 className='text-3xl font-bold text-transparent bg-clip-text bg-linear-to-br from-[#087ea4] to-[#7c93ee]'>
@@ -86,7 +187,6 @@ export function PingPage() {
           </Link>
         </div>
 
-        {/* Tabs + Split Panel */}
         <Tabs
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as TabId)}
@@ -103,7 +203,6 @@ export function PingPage() {
 
           {Object.keys(TAB_META).map((tabId) => (
             <TabsContent key={tabId} value={tabId} className='flex gap-4'>
-              {/* Left Panel — Action / Search */}
               <div className='w-[35%] shrink-0'>
                 {tabId === 'search' ? (
                   <ActionPanel
@@ -136,7 +235,6 @@ export function PingPage() {
                 )}
               </div>
 
-              {/* Right Panel — Data List */}
               <div className='flex-1 min-w-0'>
                 <DataList
                   title={
@@ -148,8 +246,8 @@ export function PingPage() {
                           ? 'Ping History'
                           : 'Search Results'
                   }
-                  items={items}
-                  onEdit={handleEdit}
+                  items={tabData[tabId]}
+                  onEdit={() => {}}
                   onDelete={(item) => handleDelete(item.key)}
                   renderValue={
                     tabId === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
@@ -157,7 +255,9 @@ export function PingPage() {
                   emptyMessage={
                     tabId === 'search'
                       ? 'Enter a search term above'
-                      : 'No data — use the panel to add some'
+                      : tabLoading[tabId]
+                        ? 'Loading...'
+                        : 'No data — use the panel to add some'
                   }
                 />
               </div>
@@ -165,7 +265,6 @@ export function PingPage() {
           ))}
         </Tabs>
 
-        {/* Footer */}
         <div className='text-center text-xs text-muted-foreground pt-2'>
           Powered by electron-store • SafeStorage • SQLite • Orama
         </div>

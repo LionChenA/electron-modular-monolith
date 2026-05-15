@@ -56,18 +56,18 @@ Added delete endpoints to ORPC contract and router:
 
 ## 6. Integration
 
-- [ ] 6.1 Connect Tabs to switch between storage types
-- [ ] 6.2 Connect ActionPanel to ORPC mutations
-- [ ] 6.3 Connect DataList to ORPC queries with TanStack Query
-- [ ] 6.4 Add toast notifications for all operations
-- [ ] 6.5 Implement Search tab with Orama integration
+- [x] 6.1 Connect Tabs to switch between storage types
+- [x] 6.2 Connect ActionPanel to ORPC mutations (setPref/storeKey/savePing with toast)
+- [x] 6.3 Connect DataList to ORPC queries with TanStack Query (getAllPreferences/listApiKeys/getPingHistory)
+- [x] 6.4 Add toast notifications for all operations (sonner success/error)
+- [ ] 6.5 Implement Search tab with Orama integration (pending - needs search input + results display)
 
 ## 7. Edge Cases
 
-- [ ] 7.1 Handle empty states for each storage type
-- [ ] 7.2 Handle long values (truncation)
+- [x] 7.1 Handle empty states for each storage type (EmptyState component)
+- [ ] 7.2 Handle long values (truncation via CSS)
 - [ ] 7.3 Handle loading states with Skeleton
-- [ ] 7.4 Handle error states
+- [ ] 7.4 Handle error states (toast on mutation error, query error states)
 
 ## 8. Testing
 
@@ -77,9 +77,9 @@ Added delete endpoints to ORPC contract and router:
 
 ## 9. Verification
 
-- [ ] 9.1 Run `pnpm build` - verify build passes
-- [ ] 9.2 Run `pnpm check` - verify lint passes
-- [ ] 9.3 Run `pnpm typecheck` - verify types pass
+- [x] 9.1 Run `pnpm build` - verify build passes (810ms)
+- [x] 9.2 Run `pnpm check` - verify lint passes (pre-existing warnings only)
+- [x] 9.3 Run `pnpm typecheck` - verify types pass (clean)
 - [ ] 9.4 Manual testing: add/edit/delete preferences
 - [ ] 9.5 Manual testing: add/edit/delete secrets
 - [ ] 9.6 Manual testing: add/delete ping records
