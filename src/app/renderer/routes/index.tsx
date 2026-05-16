@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import electronLogo from '../assets/electron.svg';
 
 import wavyLines from '../assets/wavy-lines.svg';
-import { Button, buttonVariants } from '../components/ui/button';
+import { Button } from '../components/ui/button';
 import Versions from '../components/Versions';
 import { orpc } from '../infra/client';
 
@@ -20,14 +20,14 @@ function IndexComponent() {
   };
 
   return (
-    <div className='dark relative flex flex-col items-center justify-center min-h-screen bg-background font-sans text-foreground selection:bg-primary/20 pb-20'>
+    <div className='flex flex-col items-center justify-center min-h-full bg-background font-sans text-foreground selection:bg-primary/20 pb-20'>
       <img
         src={wavyLines}
         className='absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none'
         alt='Background Pattern'
       />
 
-      <div className='relative z-10 flex flex-col items-center justify-center w-full min-h-screen pb-20'>
+      <div className='relative z-10 flex flex-col items-center justify-center w-full min-h-full pb-20'>
         <img
           alt='logo'
           className='h-32 w-32 mb-5 transition-[filter] duration-300 hover:drop-shadow-[0_0_1.2em_var(--color-primary)]'
@@ -52,7 +52,7 @@ function IndexComponent() {
         <p className='text-base font-medium text-muted-foreground mb-6'>
           Please try pressing{' '}
           <code className='px-1.5 py-0.5 rounded bg-muted font-mono text-[0.85em]'>F12</code> to
-          open the devTool
+          open DevTools
         </p>
 
         {lastPing && (
@@ -69,15 +69,12 @@ function IndexComponent() {
             href='https://electron-vite.org/'
             target='_blank'
             rel='noreferrer'
-            className={buttonVariants({ variant: 'outline' })}
+            className='inline-flex h-7 items-center justify-center rounded-md border border-border bg-input/30 px-2 text-xs font-medium text-foreground hover:bg-input/50 transition-colors'
           >
             Documentation
           </a>
 
           <Button onClick={ipcHandle}>Send ORPC Ping</Button>
-          <Link to='/ping' className={buttonVariants({ variant: 'outline' })}>
-            Go to Ping Page
-          </Link>
         </div>
 
         <Versions />

@@ -1,12 +1,9 @@
-import { buttonVariants } from '@app/renderer/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@app/renderer/components/ui/tabs';
 import { orpc } from '@app/renderer/infra/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import wavyLines from '../../../app/renderer/assets/wavy-lines.svg';
 import { ActionPanel } from './components/ActionPanel';
 import { type DataItem, DataList } from './components/DataList';
 import { SecretCell } from './components/SecretCell';
@@ -192,114 +189,88 @@ export function PingPage() {
   };
 
   return (
-    <div className='dark relative flex flex-col items-center min-h-screen bg-background font-sans text-foreground selection:bg-primary/20'>
-      <img
-        src={wavyLines}
-        className='absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none'
-        alt='Background Pattern'
-      />
+    <div className='p-4 flex flex-col gap-4'>
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setActiveTab(v as TabId)}
+        className='flex flex-col gap-4'
+      >
+        <TabsList className='w-fit'>
+          {Object.entries(TAB_META).map(([id, meta]) => (
+            <TabsTrigger key={id} value={id}>
+              {meta.icon}
+              {meta.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <div className='relative z-10 w-full max-w-5xl p-6 flex flex-col gap-4'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h1 className='text-3xl font-bold text-transparent bg-clip-text bg-linear-to-br from-[#087ea4] to-[#7c93ee]'>
-              Storage Explorer
-            </h1>
-            <p className='text-muted-foreground mt-1'>
-              Interactive storage demo — CRUD operations on all backends
-            </p>
-          </div>
-          <Link to='/' className={buttonVariants({ variant: 'outline' })}>
-            Go Home
-          </Link>
-        </div>
-
-        <Tabs
-          value={activeTab}
-          onValueChange={(v) => setActiveTab(v as TabId)}
-          className='flex flex-col gap-4'
-        >
-          <TabsList className='w-fit'>
-            {Object.entries(TAB_META).map(([id, meta]) => (
-              <TabsTrigger key={id} value={id}>
-                {meta.icon}
-                {meta.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {Object.keys(TAB_META).map((tabId) => (
-            <TabsContent key={tabId} value={tabId} className='flex gap-4'>
-              <div className='w-[35%] shrink-0'>
-                {tabId === 'search' ? (
-                  <ActionPanel
-                    title='Search Orama'
-                    onAdd={handleAdd}
-                    onDelete={() => setSearchTerm('')}
-                    showKeyField={false}
-                    valuePlaceholder='Search indexed data...'
-                  />
-                ) : (
-                  <ActionPanel
-                    title={
-                      tabId === 'preferences'
-                        ? 'Add Preference'
-                        : tabId === 'secrets'
-                          ? 'Add Secret'
-                          : 'Add Ping Record'
-                    }
-                    onAdd={handleAdd}
-                    onDelete={handleDelete}
-                    showKeyField={tabId !== 'sqlite'}
-                    valuePlaceholder={
-                      tabId === 'preferences'
-                        ? 'Value'
-                        : tabId === 'secrets'
-                          ? 'Secret value'
-                          : 'Message'
-                    }
-                  />
-                )}
-              </div>
-
-              <div className='flex-1 min-w-0'>
-                <DataList
+        {Object.keys(TAB_META).map((tabId) => (
+          <TabsContent key={tabId} value={tabId} className='flex gap-4'>
+            <div className='w-[35%] shrink-0'>
+              {tabId === 'search' ? (
+                <ActionPanel
+                  title='Search Orama'
+                  onAdd={handleAdd}
+                  onDelete={() => setSearchTerm('')}
+                  showKeyField={false}
+                  valuePlaceholder='Search indexed data...'
+                />
+              ) : (
+                <ActionPanel
                   title={
                     tabId === 'preferences'
-                      ? 'Preferences'
+                      ? 'Add Preference'
                       : tabId === 'secrets'
-                        ? 'Secrets'
-                        : tabId === 'sqlite'
-                          ? 'Ping History'
-                          : 'Search Results'
+                        ? 'Add Secret'
+                        : 'Add Ping Record'
                   }
-                  items={tabData[tabId]}
-                  onEdit={() => {}}
-                  onDelete={(item) => handleDelete(item.key)}
-                  renderValue={
-                    tabId === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
-                  }
-                  emptyMessage={
-                    tabError[tabId]
-                      ? `Error: ${tabError[tabId]}`
-                      : tabLoading[tabId]
-                        ? 'Loading...'
-                        : tabId === 'search'
-                          ? searchTerm
-                            ? 'No matches found'
-                            : 'Enter a search term above'
-                          : 'No data — use the panel to add some'
+                  onAdd={handleAdd}
+                  onDelete={handleDelete}
+                  showKeyField={tabId !== 'sqlite'}
+                  valuePlaceholder={
+                    tabId === 'preferences'
+                      ? 'Value'
+                      : tabId === 'secrets'
+                        ? 'Secret value'
+                        : 'Message'
                   }
                 />
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+              )}
+            </div>
 
-        <div className='text-center text-xs text-muted-foreground pt-2'>
-          Powered by electron-store • SafeStorage • SQLite • Orama
-        </div>
-      </div>
+            <div className='flex-1 min-w-0'>
+              <DataList
+                title={
+                  tabId === 'preferences'
+                    ? 'Preferences'
+                    : tabId === 'secrets'
+                      ? 'Secrets'
+                      : tabId === 'sqlite'
+                        ? 'Ping History'
+                        : 'Search Results'
+                }
+                items={tabData[tabId]}
+                onEdit={() => {}}
+                onDelete={(item) => handleDelete(item.key)}
+                renderValue={
+                  tabId === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
+                }
+                emptyMessage={
+                  tabError[tabId]
+                    ? `Error: ${tabError[tabId]}`
+                    : tabLoading[tabId]
+                      ? 'Loading...'
+                      : tabId === 'search'
+                        ? searchTerm
+                          ? 'No matches found'
+                          : 'Enter a search term above'
+                        : 'No data — use the panel to add some'
+                }
+              />
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }

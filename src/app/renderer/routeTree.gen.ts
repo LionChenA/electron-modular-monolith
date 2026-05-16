@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root';
 import { Route as IndexRouteImport } from './routes/index';
-import { Route as PingRouteImport } from './routes/ping';
+import { Route as SettingsRouteImport } from './routes/settings';
+import { Route as StorageRouteImport } from './routes/storage';
 
-const PingRoute = PingRouteImport.update({
-  id: '/ping',
-  path: '/ping',
+const StorageRoute = StorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any);
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +31,48 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
-  '/ping': typeof PingRoute;
+  '/settings': typeof SettingsRoute;
+  '/storage': typeof StorageRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
-  '/ping': typeof PingRoute;
+  '/settings': typeof SettingsRoute;
+  '/storage': typeof StorageRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
-  '/ping': typeof PingRoute;
+  '/settings': typeof SettingsRoute;
+  '/storage': typeof StorageRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/ping';
+  fullPaths: '/' | '/settings' | '/storage';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/ping';
-  id: '__root__' | '/' | '/ping';
+  to: '/' | '/settings' | '/storage';
+  id: '__root__' | '/' | '/settings' | '/storage';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  PingRoute: typeof PingRoute;
+  SettingsRoute: typeof SettingsRoute;
+  StorageRoute: typeof StorageRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/ping': {
-      id: '/ping';
-      path: '/ping';
-      fullPath: '/ping';
-      preLoaderRoute: typeof PingRouteImport;
+    '/storage': {
+      id: '/storage';
+      path: '/storage';
+      fullPath: '/storage';
+      preLoaderRoute: typeof StorageRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/settings': {
+      id: '/settings';
+      path: '/settings';
+      fullPath: '/settings';
+      preLoaderRoute: typeof SettingsRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/': {
@@ -70,7 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PingRoute: PingRoute,
+  SettingsRoute: SettingsRoute,
+  StorageRoute: StorageRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
