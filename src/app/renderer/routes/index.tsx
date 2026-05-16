@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import electronLogo from '../assets/electron.svg';
 
 import wavyLines from '../assets/wavy-lines.svg';
-import { Button } from '../components/ui/button';
+import { Button, buttonVariants } from '../components/ui/button';
 import Versions from '../components/Versions';
 import { orpc } from '../infra/client';
 
@@ -20,14 +20,14 @@ function IndexComponent() {
   };
 
   return (
-    <div className='relative flex flex-col items-center justify-center min-h-full bg-background font-sans text-foreground selection:bg-primary/20 pb-20'>
+    <div className='relative flex flex-col items-center min-h-full bg-background font-sans text-foreground selection:bg-primary/20'>
       <img
         src={wavyLines}
         className='absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none'
         alt='Background Pattern'
       />
 
-      <div className='relative z-10 flex flex-col items-center justify-center w-full min-h-full pb-20'>
+      <div className='relative z-10 flex flex-col items-center justify-center flex-1 w-full'>
         <img
           alt='logo'
           className='h-32 w-32 mb-5 transition-[filter] duration-300 hover:drop-shadow-[0_0_1.2em_var(--color-primary)]'
@@ -64,21 +64,21 @@ function IndexComponent() {
           </p>
         )}
 
-        <div className='flex flex-wrap justify-center gap-4 mt-2'>
+        <div className='flex flex-wrap justify-center gap-4'>
           <a
             href='https://electron-vite.org/'
             target='_blank'
             rel='noreferrer'
-            className='inline-flex h-7 items-center justify-center rounded-md border border-border bg-input/30 px-2 text-xs font-medium text-foreground hover:bg-input/50 transition-colors'
+            className={buttonVariants({ variant: 'outline' })}
           >
             Documentation
           </a>
 
           <Button onClick={ipcHandle}>Send ORPC Ping</Button>
         </div>
-
-        <Versions />
       </div>
+
+      <Versions />
     </div>
   );
 }

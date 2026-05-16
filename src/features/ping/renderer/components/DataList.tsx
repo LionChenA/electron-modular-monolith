@@ -35,40 +35,34 @@ export function DataList({
         <EmptyState message={emptyMessage} />
       ) : (
         <ScrollArea className='max-h-[400px]'>
-          <div className='flex flex-col gap-0.5'>
+          <div className='flex flex-col gap-1'>
             {items.map((item, i) => (
               <div
                 key={item.id}
-                className='group flex items-center justify-between px-3 py-2 rounded-md hover:bg-accent/30 transition-colors'
+                className='group flex items-center justify-between px-4 py-2.5 border-b border-border/40 last:border-b-0 transition-colors'
               >
-                <div className='flex items-center gap-3 min-w-0 flex-1'>
-                  <span className='text-[11px] text-muted-foreground/30 w-5 text-right tabular-nums'>
+                <div className='flex items-center gap-4 min-w-0 flex-1'>
+                  <span className='text-xs text-muted-foreground/30 w-5 text-right tabular-nums shrink-0'>
                     {i + 1}
                   </span>
-                  <span className='text-sm font-mono text-foreground/80 truncate'>{item.key}</span>
-                  {renderValue ? (
-                    renderValue(item)
-                  ) : (
-                    <span className='text-xs text-muted-foreground font-mono truncate'>
-                      {item.value}
+                  <div className='flex items-center gap-4 min-w-0 flex-1'>
+                    <span className='text-sm font-mono text-foreground/90 w-[10ch] shrink-0 truncate'>
+                      {item.key}
                     </span>
-                  )}
+                    {renderValue ? (
+                      renderValue(item)
+                    ) : (
+                      <span className='text-xs text-muted-foreground/70 font-mono truncate'>
+                        {item.value}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className='flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0'>
-                  <Button
-                    variant='ghost'
-                    size='icon-xs'
-                    onClick={() => onEdit(item)}
-                    aria-label={`Edit ${item.key}`}
-                  >
+                <div className='flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity'>
+                  <Button variant='ghost' size='icon-xs' onClick={() => onEdit(item)}>
                     <PencilIcon className='size-3' />
                   </Button>
-                  <Button
-                    variant='ghost'
-                    size='icon-xs'
-                    onClick={() => onDelete(item)}
-                    aria-label={`Delete ${item.key}`}
-                  >
+                  <Button variant='ghost' size='icon-xs' onClick={() => onDelete(item)}>
                     <Trash2Icon className='size-3' />
                   </Button>
                 </div>
