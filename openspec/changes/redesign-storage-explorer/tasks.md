@@ -23,13 +23,13 @@
 - [x] 4.3 Remove "Go to Ping Page" link (replaced by activity bar)
 - [x] 4.4 Update `routeTree.gen.ts`
 
-## 5. Redesign Storage Explorer Page 🔄
+## 5. Redesign Storage Explorer Page ✅
 
-- [ ] 5.1 Create StatusCardsRow component (4 storage backend cards with counts, clickable)
-- [ ] 5.2 Create InspectorPanel component (engine metadata + new entry form)
-- [ ] 5.3 Create DataBrowser component (entry list with hover-reveal actions)
-- [ ] 5.4 Rewrite `page.tsx` with new layered layout (StatusCards + InspectorPanel + DataBrowser)
-- [ ] 5.5 Update ActionPanel, DataList, EmptyState, SecretCell to use shadcn semantic colors
+- [x] 5.1 Create StatusCardsRow component (4 storage backend cards with counts, clickable)
+- [x] 5.2 Create InspectorPanel component (engine metadata + new entry form)
+- [x] 5.3 Create DataBrowser component (entry list with hover-reveal actions)
+- [x] 5.4 Rewrite `page.tsx` with new layered layout (StatusCards + InspectorPanel + DataBrowser)
+- [x] 5.5 Update ActionPanel, DataList, EmptyState, SecretCell to use shadcn semantic colors
 
 ## 6. Update Home Page ✅
 
@@ -49,5 +49,5 @@
 - [x] 8.4 Run `pnpm build` - verify production build passes
 - [x] 8.5 Manual: verify theme toggle cycles dark/light correctly
 - [x] 8.6 Agent-browser: verify activity bar navigation works (Home/Storage/Settings)
-- [ ] 8.7 Visual: verify Storage Explorer new layout
-- [ ] 8.8 Manual: verify Settings page theme selector works
+- [x] 8.7 Visual: verify Storage Explorer new layout (agent-browser screenshot confirmed)
+- [x] 8.8 Manual: verify Settings page theme selector works (agent-browser snapshot confirmed)
