@@ -1,7 +1,5 @@
 import { Button } from '@app/renderer/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@app/renderer/components/ui/card';
 import { Input } from '@app/renderer/components/ui/input';
-import { Separator } from '@app/renderer/components/ui/separator';
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -39,36 +37,34 @@ export function ActionPanel({
   };
 
   return (
-    <Card size='sm'>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className='flex flex-col gap-3'>
-        {showKeyField && (
-          <Input placeholder='Key' value={key} onChange={(e) => setKey(e.target.value)} />
-        )}
-        <Input
-          placeholder={valuePlaceholder}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Separator />
-        <div className='flex gap-2'>
-          <Button size='sm' onClick={handleAdd} disabled={!value.trim()}>
-            <PlusIcon data-icon='inline-start' />
-            Add
-          </Button>
-          <Button
-            size='sm'
-            variant='destructive'
-            onClick={handleDelete}
-            disabled={showKeyField && !key.trim()}
-          >
-            <Trash2Icon data-icon='inline-start' />
-            Delete
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <div className='flex flex-col gap-3'>
+      <p className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground'>
+        {title}
+      </p>
+      {showKeyField && (
+        <Input placeholder='Key' value={key} onChange={(e) => setKey(e.target.value)} />
+      )}
+      <Input
+        placeholder={valuePlaceholder}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <div className='h-px bg-border' />
+      <div className='flex gap-2'>
+        <Button size='sm' onClick={handleAdd} disabled={!value.trim()}>
+          <PlusIcon data-icon='inline-start' />
+          Add
+        </Button>
+        <Button
+          size='sm'
+          variant='destructive'
+          onClick={handleDelete}
+          disabled={showKeyField && !key.trim()}
+        >
+          <Trash2Icon data-icon='inline-start' />
+          Delete
+        </Button>
+      </div>
+    </div>
   );
 }

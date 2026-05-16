@@ -1,4 +1,3 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@app/renderer/components/ui/tabs';
 import { orpc } from '@app/renderer/infra/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
@@ -10,11 +9,11 @@ import { SecretCell } from './components/SecretCell';
 
 type TabId = 'preferences' | 'secrets' | 'sqlite' | 'search';
 
-const TAB_META: Record<TabId, { label: string; icon: React.ReactNode }> = {
-  preferences: { label: 'Preferences', icon: <Settings2Icon /> },
-  secrets: { label: 'Secrets', icon: <KeyIcon /> },
-  sqlite: { label: 'SQLite', icon: <DatabaseIcon /> },
-  search: { label: 'Search', icon: <SearchIcon /> },
+const TAB_META: Record<TabId, { label: string; icon: React.ReactNode; desc: string }> = {
+  preferences: { label: 'Preferences', icon: <Settings2Icon />, desc: 'electron-store key-value' },
+  secrets: { label: 'Secrets', icon: <KeyIcon />, desc: 'OS-level encrypted secrets' },
+  sqlite: { label: 'SQLite', icon: <DatabaseIcon />, desc: 'Structured data with SQL' },
+  search: { label: 'Search', icon: <SearchIcon />, desc: 'Orama full-text search' },
 };
 
 export function PingPage() {
@@ -22,7 +21,7 @@ export function PingPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
 
-  // --- Queries ---
+  // Queries
   const prefsQuery = useQuery(orpc.ping.getAllPreferences.queryOptions());
   const keysQuery = useQuery(orpc.ping.listApiKeys.queryOptions());
   const historyQuery = useQuery(orpc.ping.getPingHistory.queryOptions());
@@ -31,7 +30,7 @@ export function PingPage() {
     enabled: searchTerm.length > 0,
   });
 
-  // --- Mutations: Preferences ---
+  // Preferences mutations
   const setPref = useMutation({
     ...orpc.ping.setPreferences.mutationOptions(),
     onSuccess: () => {
@@ -54,7 +53,7 @@ export function PingPage() {
     onError: () => toast.error('Failed to delete preference'),
   });
 
-  // --- Mutations: Secrets ---
+  // Secrets mutations
   const storeKey = useMutation({
     ...orpc.ping.storeApiKey.mutationOptions(),
     onSuccess: () => {
@@ -73,7 +72,7 @@ export function PingPage() {
     onError: () => toast.error('Failed to delete secret'),
   });
 
-  // --- Mutations: SQLite ---
+  // SQLite mutations
   const savePing = useMutation({
     ...orpc.ping.savePingToDb.mutationOptions(),
     onSuccess: () => {
@@ -92,7 +91,7 @@ export function PingPage() {
     onError: () => toast.error('Failed to delete ping'),
   });
 
-  // --- Handlers ---
+  // Handlers
   const handleAdd = useCallback(
     (key: string, value: string) => {
       switch (activeTab) {
@@ -107,9 +106,7 @@ export function PingPage() {
           break;
         case 'search': {
           const term = value.trim();
-          if (term.length > 0) {
-            setSearchTerm(term);
-          }
+          if (term.length > 0) setSearchTerm(term);
           break;
         }
       }
@@ -134,7 +131,7 @@ export function PingPage() {
     [activeTab, delPref, delKey, delPing],
   );
 
-  // --- Data mapping per tab ---
+  // Data mapping
   const prefItems: DataItem[] = prefsQuery.data
     ? Object.entries(prefsQuery.data).map(([k, v], i) => ({
         id: String(i),
@@ -144,27 +141,15 @@ export function PingPage() {
     : [];
 
   const secretItems: DataItem[] = keysQuery.data
-    ? keysQuery.data.map((k) => ({
-        id: k,
-        key: k,
-        value: '',
-      }))
+    ? keysQuery.data.map((k) => ({ id: k, key: k, value: '' }))
     : [];
 
   const historyItems: DataItem[] = historyQuery.data
-    ? historyQuery.data.map((r) => ({
-        id: r.id,
-        key: r.id,
-        value: r.message,
-      }))
+    ? historyQuery.data.map((r) => ({ id: r.id, key: r.id, value: r.message }))
     : [];
 
   const searchItems: DataItem[] = searchQuery.data
-    ? searchQuery.data.map((r) => ({
-        id: r.id,
-        key: r.id,
-        value: r.message,
-      }))
+    ? searchQuery.data.map((r) => ({ id: r.id, key: r.id, value: r.message }))
     : [];
 
   const tabData: Record<TabId, DataItem[]> = {
@@ -188,89 +173,126 @@ export function PingPage() {
     search: searchQuery.error?.message ?? null,
   };
 
+  const meta = TAB_META[activeTab];
+  const items = tabData[activeTab];
+  const loading = tabLoading[activeTab];
+  const error = tabError[activeTab];
+
   return (
-    <div className='p-4 flex flex-col gap-4'>
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as TabId)}
-        className='flex flex-col gap-4'
-      >
-        <TabsList className='w-fit'>
-          {Object.entries(TAB_META).map(([id, meta]) => (
-            <TabsTrigger key={id} value={id}>
-              {meta.icon}
-              {meta.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {Object.keys(TAB_META).map((tabId) => (
-          <TabsContent key={tabId} value={tabId} className='flex gap-4'>
-            <div className='w-[35%] shrink-0'>
-              {tabId === 'search' ? (
-                <ActionPanel
-                  title='Search Orama'
-                  onAdd={handleAdd}
-                  onDelete={() => setSearchTerm('')}
-                  showKeyField={false}
-                  valuePlaceholder='Search indexed data...'
-                />
-              ) : (
-                <ActionPanel
-                  title={
-                    tabId === 'preferences'
-                      ? 'Add Preference'
-                      : tabId === 'secrets'
-                        ? 'Add Secret'
-                        : 'Add Ping Record'
-                  }
-                  onAdd={handleAdd}
-                  onDelete={handleDelete}
-                  showKeyField={tabId !== 'sqlite'}
-                  valuePlaceholder={
-                    tabId === 'preferences'
-                      ? 'Value'
-                      : tabId === 'secrets'
-                        ? 'Secret value'
-                        : 'Message'
-                  }
-                />
-              )}
+    <div className='flex flex-col gap-3 p-4'>
+      {/* Status cards row — clickable storage backend cards */}
+      <div className='flex gap-2'>
+        {(Object.entries(TAB_META) as [TabId, typeof meta][]).map(([id, m]) => (
+          <button
+            key={id}
+            type='button'
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all flex-1 ${
+              activeTab === id
+                ? 'bg-accent text-accent-foreground ring-1 ring-border'
+                : 'bg-muted/30 text-muted-foreground hover:bg-accent/30'
+            }`}
+          >
+            <div className={`p-1 rounded-md ${activeTab === id ? 'bg-background/50' : ''}`}>
+              {m.icon}
             </div>
-
-            <div className='flex-1 min-w-0'>
-              <DataList
-                title={
-                  tabId === 'preferences'
-                    ? 'Preferences'
-                    : tabId === 'secrets'
-                      ? 'Secrets'
-                      : tabId === 'sqlite'
-                        ? 'Ping History'
-                        : 'Search Results'
-                }
-                items={tabData[tabId]}
-                onEdit={() => {}}
-                onDelete={(item) => handleDelete(item.key)}
-                renderValue={
-                  tabId === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
-                }
-                emptyMessage={
-                  tabError[tabId]
-                    ? `Error: ${tabError[tabId]}`
-                    : tabLoading[tabId]
-                      ? 'Loading...'
-                      : tabId === 'search'
-                        ? searchTerm
-                          ? 'No matches found'
-                          : 'Enter a search term above'
-                        : 'No data — use the panel to add some'
-                }
-              />
+            <div className='min-w-0'>
+              <p className='text-xs font-medium'>{m.label}</p>
+              <p className='text-[10px] text-muted-foreground/60 truncate'>
+                {tabData[id].length} items
+              </p>
             </div>
-          </TabsContent>
+            <div
+              className={`ml-auto size-1.5 rounded-full ${
+                activeTab === id ? 'bg-primary' : 'bg-muted-foreground/20'
+              }`}
+            />
+          </button>
         ))}
-      </Tabs>
+      </div>
+
+      {/* Inspector + Data Browser */}
+      <div className='flex gap-4'>
+        {/* Left — Inspector */}
+        <div className='w-[240px] shrink-0 flex flex-col gap-3 p-3 rounded-lg border border-border bg-muted/20'>
+          <div>
+            <p className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1'>
+              ENGINE
+            </p>
+            <p className='text-sm font-medium text-foreground'>{meta.label}</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>{meta.desc}</p>
+          </div>
+          <div className='h-px bg-border' />
+          <div>
+            <p className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1'>
+              ENTRIES
+            </p>
+            <p className='text-2xl font-light text-foreground tabular-nums'>{items.length}</p>
+          </div>
+          <div className='h-px bg-border' />
+          {activeTab === 'search' ? (
+            <ActionPanel
+              title='SEARCH'
+              onAdd={handleAdd}
+              onDelete={() => setSearchTerm('')}
+              showKeyField={false}
+              valuePlaceholder='Search indexed data...'
+            />
+          ) : (
+            <ActionPanel
+              title={
+                activeTab === 'preferences'
+                  ? 'NEW PREFERENCE'
+                  : activeTab === 'secrets'
+                    ? 'NEW SECRET'
+                    : 'NEW PING'
+              }
+              onAdd={handleAdd}
+              onDelete={handleDelete}
+              showKeyField={activeTab !== 'sqlite'}
+              valuePlaceholder={
+                activeTab === 'preferences'
+                  ? 'Value'
+                  : activeTab === 'secrets'
+                    ? 'Secret value'
+                    : 'Message'
+              }
+            />
+          )}
+        </div>
+
+        {/* Right — Data Browser */}
+        <div className='flex-1 min-w-0 p-3 rounded-lg border border-border bg-muted/20'>
+          <DataList
+            title={
+              activeTab === 'preferences'
+                ? 'PREFERENCES'
+                : activeTab === 'secrets'
+                  ? 'SECRETS'
+                  : activeTab === 'sqlite'
+                    ? 'PING HISTORY'
+                    : 'SEARCH RESULTS'
+            }
+            items={items}
+            onEdit={() => {}}
+            onDelete={(item) => handleDelete(item.key)}
+            renderValue={
+              activeTab === 'secrets' ? (item) => <SecretCell value={item.value} /> : undefined
+            }
+            emptyMessage={
+              error
+                ? `Error: ${error}`
+                : loading
+                  ? 'Loading...'
+                  : activeTab === 'search'
+                    ? searchTerm
+                      ? 'No matches found'
+                      : 'Enter a search term above'
+                    : 'No data — use the panel to add some'
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 }
