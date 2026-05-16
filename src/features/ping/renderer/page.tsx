@@ -73,10 +73,18 @@ export function PingPage() {
   });
 
   // SQLite mutations
+  const indexPing = useMutation(orpc.ping.indexPing.mutationOptions());
+
   const savePing = useMutation({
     ...orpc.ping.savePingToDb.mutationOptions(),
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: orpc.ping.getPingHistory.queryOptions().queryKey });
+      indexPing.mutate({
+        id: String(data.id),
+        message: variables.message,
+        timestamp: variables.timestamp,
+        count: variables.count,
+      });
       toast.success('Ping saved');
     },
     onError: () => toast.error('Failed to save ping'),

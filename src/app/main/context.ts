@@ -69,6 +69,9 @@ export async function initializeContext(): Promise<MainContext> {
 
   try {
     db = await createDatabase();
+    db.prepare(
+      'CREATE TABLE IF NOT EXISTS pings (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, timestamp INTEGER, count INTEGER)',
+    ).run();
   } catch (error) {
     console.error('[context] Failed to initialize database:', error);
     throw new Error('Database initialization failed');
