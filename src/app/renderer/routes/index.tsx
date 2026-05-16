@@ -20,7 +20,7 @@ function IndexComponent() {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-full bg-background font-sans text-foreground selection:bg-primary/20 pb-20'>
+    <div className='relative flex flex-col items-center justify-center min-h-full bg-background font-sans text-foreground selection:bg-primary/20 pb-20'>
       <img
         src={wavyLines}
         className='absolute inset-0 w-full h-full object-cover opacity-100 pointer-events-none'

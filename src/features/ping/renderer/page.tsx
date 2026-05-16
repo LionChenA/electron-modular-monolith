@@ -179,9 +179,9 @@ export function PingPage() {
   const error = tabError[activeTab];
 
   return (
-    <div className='flex flex-col gap-3 p-4'>
-      {/* Status cards row — clickable storage backend cards */}
-      <div className='flex gap-2'>
+    <div className='flex flex-col min-h-0'>
+      {/* Status cards row */}
+      <div className='flex gap-2 px-4 py-3 border-b border-border'>
         {(Object.entries(TAB_META) as [TabId, typeof meta][]).map(([id, m]) => (
           <button
             key={id}
@@ -190,17 +190,12 @@ export function PingPage() {
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all flex-1 ${
               activeTab === id
                 ? 'bg-accent text-accent-foreground ring-1 ring-border'
-                : 'bg-muted/30 text-muted-foreground hover:bg-accent/30'
+                : 'text-muted-foreground hover:bg-accent/30'
             }`}
           >
-            <div className={`p-1 rounded-md ${activeTab === id ? 'bg-background/50' : ''}`}>
-              {m.icon}
-            </div>
             <div className='min-w-0'>
               <p className='text-xs font-medium'>{m.label}</p>
-              <p className='text-[10px] text-muted-foreground/60 truncate'>
-                {tabData[id].length} items
-              </p>
+              <p className='text-[10px] text-muted-foreground/60'>{tabData[id].length} items</p>
             </div>
             <div
               className={`ml-auto size-1.5 rounded-full ${
@@ -212,9 +207,9 @@ export function PingPage() {
       </div>
 
       {/* Inspector + Data Browser */}
-      <div className='flex gap-4'>
+      <div className='flex-1 flex min-h-0'>
         {/* Left — Inspector */}
-        <div className='w-[240px] shrink-0 flex flex-col gap-3 p-3 rounded-lg border border-border bg-muted/20'>
+        <div className='w-[240px] shrink-0 border-r border-border p-4 flex flex-col gap-4 overflow-y-auto'>
           <div>
             <p className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1'>
               ENGINE
@@ -262,7 +257,7 @@ export function PingPage() {
         </div>
 
         {/* Right — Data Browser */}
-        <div className='flex-1 min-w-0 p-3 rounded-lg border border-border bg-muted/20'>
+        <div className='flex-1 p-4 min-w-0 overflow-y-auto'>
           <DataList
             title={
               activeTab === 'preferences'
