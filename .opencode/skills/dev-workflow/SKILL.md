@@ -99,7 +99,20 @@ Follow the project's test layer strategy from `openspec/specs/`:
 
 Use `pnpm shadcn add` (project-local) rather than `pnpm dlx shadcn@latest add`. See the Shadcn Component Management section above for details.
 
-### 4. Verification Before Completion
+### 4. Type/Lint Root Cause — Skipping Project Convention Checks
+
+Most type and lint issues in this session came from a single pattern:
+
+> **Assuming a common practice is correct for this project, without verifying against the project's own config, spec, or conventions.**
+
+Specific cases:
+- **Shadcn CLI**: Used `pnpm dlx shadcn@latest` (common practice) instead of checking `package.json` for a local `shadcn` dep and using `pnpm shadcn`
+- **Component testing**: Wrote Vitest `.test.tsx` files (common practice) instead of checking `openspec/specs/unit_testing/spec.md` which mandates Storybook stories
+- **Pre-existing lint**: Ran `pnpm test:smoke` and `pnpm test` without also running `pnpm check`, leaving 20+ warnings unaddressed
+
+**Prevention**: Before taking any action on a project, load the dev-workflow skill, read the relevant spec files in `openspec/specs/`, and check existing configuration files (`package.json`, `vitest.config.ts`, `components.json`, `biome.json`). Then act.
+
+### 5. Verification Before Completion
 
 Every implementation phase must complete the full verification loop before the next phase starts:
 
