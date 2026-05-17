@@ -192,7 +192,7 @@ export function PingPage() {
       {/* Inspector + Data Browser */}
       <div className='flex-1 flex min-h-0'>
         {/* Left — Inspector */}
-        <div className='w-[240px] shrink-0 border-r border-border p-4 flex flex-col gap-4 overflow-y-auto'>
+        <div className='w-60 shrink-0 border-r border-border p-4 flex flex-col gap-4 overflow-y-auto'>
           <div>
             <p className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1'>
               ENGINE
