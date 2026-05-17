@@ -1,20 +1,12 @@
 import { orpc } from '@app/renderer/infra/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
+import { TAB_META, type TabId } from '../shared/storage-types';
 import { ActionPanel } from './components/ActionPanel';
 import { type DataItem, DataList } from './components/DataList';
 import { SecretCell } from './components/SecretCell';
-
-type TabId = 'preferences' | 'secrets' | 'sqlite' | 'search';
-
-const TAB_META: Record<TabId, { label: string; icon: React.ReactNode; desc: string }> = {
-  preferences: { label: 'Preferences', icon: <Settings2Icon />, desc: 'electron-store key-value' },
-  secrets: { label: 'Secrets', icon: <KeyIcon />, desc: 'OS-level encrypted secrets' },
-  sqlite: { label: 'SQLite', icon: <DatabaseIcon />, desc: 'Structured data with SQL' },
-  search: { label: 'Search', icon: <SearchIcon />, desc: 'Orama full-text search' },
-};
+import { StatusCards } from './components/StatusCards';
 
 export function PingPage() {
   const [activeTab, setActiveTab] = useState<TabId>('preferences');
@@ -167,6 +159,13 @@ export function PingPage() {
     search: searchItems,
   };
 
+  const tabCounts: Record<TabId, number> = {
+    preferences: prefItems.length,
+    secrets: secretItems.length,
+    sqlite: historyItems.length,
+    search: searchItems.length,
+  };
+
   const tabLoading: Record<TabId, boolean> = {
     preferences: prefsQuery.isLoading,
     secrets: keysQuery.isLoading,
@@ -188,31 +187,7 @@ export function PingPage() {
 
   return (
     <div className='flex flex-col min-h-0'>
-      {/* Status cards row */}
-      <div className='flex gap-2 px-4 py-3 border-b border-border'>
-        {(Object.entries(TAB_META) as [TabId, typeof meta][]).map(([id, m]) => (
-          <button
-            key={id}
-            type='button'
-            onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all flex-1 ${
-              activeTab === id
-                ? 'bg-accent text-accent-foreground ring-1 ring-border'
-                : 'text-muted-foreground hover:bg-accent/30'
-            }`}
-          >
-            <div className='min-w-0'>
-              <p className='text-xs font-medium'>{m.label}</p>
-              <p className='text-[10px] text-muted-foreground/60'>{tabData[id].length} items</p>
-            </div>
-            <div
-              className={`ml-auto size-1.5 rounded-full ${
-                activeTab === id ? 'bg-primary' : 'bg-muted-foreground/20'
-              }`}
-            />
-          </button>
-        ))}
-      </div>
+      <StatusCards activeTab={activeTab} tabCounts={tabCounts} onTabChange={setActiveTab} />
 
       {/* Inspector + Data Browser */}
       <div className='flex-1 flex min-h-0'>
