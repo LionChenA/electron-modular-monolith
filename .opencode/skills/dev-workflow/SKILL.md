@@ -66,6 +66,48 @@ pnpm check          # Biome format + lint
 pnpm build          # Production build
 ```
 
+## Lessons Learned
+
+### 1. Prototype → Implementation Visual Consistency
+
+When working with a UI prototype as a design reference:
+
+1. **Prototype confirmed** → extract key visual parameters into `design.md` *before* deleting the prototype
+   - Spacing values (padding, gap, margin)
+   - Border treatment (border-r vs rounded-lg, border colors)
+   - Background treatment (bg-accent vs bg-muted vs none)
+2. **Implementation complete** → take agent-browser screenshot of the real implementation
+3. **Compare side-by-side** with the prototype before deleting it
+4. **Fix discrepancies** found in comparison, then delete prototype
+
+**Root cause of this lesson**: In the redesign-storage-explorer change, the prototype was deleted immediately after confirmation. Implementation relied on memory, leading to visual drift. The fix required recreating the prototype from memory and iterating with screenshots.
+
+### 2. Test Strategy Alignment
+
+Follow the project's test layer strategy from `openspec/specs/`:
+
+| Layer | Method | Tool |
+|-------|--------|------|
+| **Unit** | Direct function calls with mocks | Vitest |
+| **Integration** | `call()` to ORPC handlers with mocked context | Vitest |
+| **Component** | Storybook stories (visual testing) | Storybook |
+| **E2E** | Real app (no mocking) | Playwright |
+
+**Components are tested via Storybook stories, NOT Vitest `.test.tsx` files.** Writing Vitest component tests violates the spec and creates maintenance burden. Extract logic into hooks/testable functions instead.
+
+### 3. Shadcn CLI Version Consistency
+
+Use `pnpm shadcn add` (project-local) rather than `pnpm dlx shadcn@latest add`. See the Shadcn Component Management section above for details.
+
+### 4. Verification Before Completion
+
+Every implementation phase must complete the full verification loop before the next phase starts:
+
+1. `pnpm test:smoke` — app compiles and renders
+2. `pnpm test` — existing tests not broken (+ new tests if applicable)
+3. Agent-browser visual check — UI matches design (for UI changes)
+4. Final: `pnpm typecheck && pnpm check && pnpm build` — before merge/archive
+
 ## Quick Reference
 
 | Command | What | When |
