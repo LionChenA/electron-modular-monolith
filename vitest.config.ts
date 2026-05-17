@@ -39,7 +39,8 @@ export default defineConfig({
           include: [
             'src/app/main/**/*.{test,spec}.{ts,tsx}',
             'src/shared/**/*.{test,spec}.{ts,tsx}',
-            'src/features/**/*.{test,spec}.{ts,tsx}',
+            'src/features/**/*.test.ts',
+            'src/features/**/*.spec.ts',
             'src/features/**/*integration.test.{ts,tsx}',
           ],
           exclude: ['**/node_modules/**', '**/test/e2e/**', 'src/**/*.stories.tsx'],

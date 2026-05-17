@@ -41,7 +41,7 @@ const mocks = vi.hoisted(() => {
     delete: vi.fn(),
     close: vi.fn(),
     transaction: vi.fn(),
-    prepare: vi.fn(),
+    prepare: vi.fn().mockReturnValue({ run: vi.fn() }),
     getDatabase: vi.fn(),
   };
 
@@ -171,6 +171,15 @@ describe('Context', () => {
       expect(context.secrets).toBeDefined();
       expect(context.db).toBeDefined();
       expect(context.ai).toBeDefined();
+    });
+
+    it('creates pings table during initialization', async () => {
+      await initializeContext();
+      expect(mocks.mockDb.prepare).toHaveBeenCalledWith(
+        'CREATE TABLE IF NOT EXISTS pings (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, timestamp INTEGER, count INTEGER)',
+      );
+      const stmt = mocks.mockDb.prepare.mock.results[0]?.value;
+      expect(stmt.run).toHaveBeenCalledOnce();
     });
   });
 });

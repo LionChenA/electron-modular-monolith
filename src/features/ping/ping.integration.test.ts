@@ -23,6 +23,8 @@ type MockContext = {
   db: {
     insert: ReturnType<typeof vi.fn>;
     query: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+    prepare: ReturnType<typeof vi.fn>;
   };
   ai: {
     insert: ReturnType<typeof vi.fn>;
@@ -39,18 +41,22 @@ function createMockContext(): MockContext {
     prefs: {
       get: vi.fn().mockReturnValue(undefined),
       set: vi.fn(),
+      delete: vi.fn(),
       has: vi.fn().mockReturnValue(false),
       values: {},
     },
     secrets: {
       get: vi.fn().mockReturnValue(undefined),
       set: vi.fn(),
+      delete: vi.fn(),
       has: vi.fn().mockReturnValue(false),
       keys: [],
     },
     db: {
       insert: vi.fn().mockReturnValue(1),
       query: vi.fn().mockReturnValue([]),
+      delete: vi.fn().mockReturnValue(1),
+      prepare: vi.fn().mockReturnValue({ run: vi.fn() }),
     },
     ai: {
       insert: vi.fn().mockResolvedValue('doc-1'),
@@ -236,6 +242,45 @@ describe('Ping Integration (ORPC call)', () => {
         term: 'test',
         limit: 5,
       });
+    });
+  });
+
+  describe('8.10 deletePreference', () => {
+    it('deletes a preference by key', async () => {
+      await call(
+        pingRouter.deletePreference,
+        { key: 'theme' },
+        {
+          context: mockContext as any,
+        },
+      );
+      expect(mockContext.prefs.delete).toHaveBeenCalledWith('theme');
+    });
+  });
+
+  describe('8.11 deleteApiKey', () => {
+    it('deletes an API key by name', async () => {
+      await call(
+        pingRouter.deleteApiKey,
+        { key: 'openai' },
+        {
+          context: mockContext as any,
+        },
+      );
+      expect(mockContext.secrets.delete).toHaveBeenCalledWith('openai');
+    });
+  });
+
+  describe('8.12 deletePing', () => {
+    it('deletes a ping by id', async () => {
+      await call(
+        pingRouter.deletePing,
+        { id: '42' },
+        {
+          context: mockContext as any,
+        },
+      );
+      expect(mockContext.db.delete).toHaveBeenCalledWith('pings', { id: 42 });
     });
   });
 });
