@@ -1,6 +1,6 @@
 import { call } from '@orpc/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { setRuntimeContext } from '../../app/main/context';
+import { type MainContext, setRuntimeContext } from '../../app/main/context';
 import { pingRouter } from './main/router';
 
 type MockContext = {
@@ -70,7 +70,7 @@ describe('Ping Integration (ORPC call)', () => {
 
   beforeEach(() => {
     mockContext = createMockContext();
-    setRuntimeContext(mockContext as any);
+    setRuntimeContext(mockContext as unknown as MainContext);
   });
 
   afterEach(() => {
@@ -80,18 +80,24 @@ describe('Ping Integration (ORPC call)', () => {
   describe('8.2 sendPing', () => {
     it('returns pong and publishes to bus', async () => {
       const result = await call(pingRouter.sendPing, undefined, {
-        context: mockContext as any,
+        context: mockContext as unknown as MainContext,
       });
       expect(result).toBe('pong');
       expect(mockContext.bus.publish).toHaveBeenCalledWith('ping', 'pong');
     });
 
     it('can be called multiple times', async () => {
-      await call(pingRouter.sendPing, undefined, { context: mockContext as any });
-      await call(pingRouter.sendPing, undefined, { context: mockContext as any });
-      await call(pingRouter.sendPing, undefined, { context: mockContext as any });
+      await call(pingRouter.sendPing, undefined, {
+        context: mockContext as unknown as MainContext,
+      });
+      await call(pingRouter.sendPing, undefined, {
+        context: mockContext as unknown as MainContext,
+      });
+      await call(pingRouter.sendPing, undefined, {
+        context: mockContext as unknown as MainContext,
+      });
       const result = await call(pingRouter.sendPing, undefined, {
-        context: mockContext as any,
+        context: mockContext as unknown as MainContext,
       });
       expect(result).toBe('pong');
       expect(mockContext.bus.publish).toHaveBeenCalledTimes(4);
@@ -104,7 +110,7 @@ describe('Ping Integration (ORPC call)', () => {
       const result = await call(
         pingRouter.getPreferences,
         { key: 'theme' },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(result).toBe('dark');
       expect(mockContext.prefs.get).toHaveBeenCalledWith('theme');
@@ -115,7 +121,7 @@ describe('Ping Integration (ORPC call)', () => {
       const result = await call(
         pingRouter.getPreferences,
         { key: 'nonexistent' },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(result).toBeUndefined();
     });
@@ -126,7 +132,7 @@ describe('Ping Integration (ORPC call)', () => {
       await call(
         pingRouter.setPreferences,
         { key: 'theme', value: 'light' },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(mockContext.prefs.set).toHaveBeenCalledWith('theme', 'light');
     });
@@ -137,7 +143,7 @@ describe('Ping Integration (ORPC call)', () => {
       await call(
         pingRouter.storeApiKey,
         { key: 'openai', value: 'sk-xxx' },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(mockContext.secrets.set).toHaveBeenCalledWith('openai', 'sk-xxx');
     });
@@ -149,7 +155,7 @@ describe('Ping Integration (ORPC call)', () => {
       const result = await call(
         pingRouter.savePingToDb,
         { message: 'test', timestamp: Date.now() },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(result).toEqual({ id: 42 });
       expect(mockContext.db.insert).toHaveBeenCalledWith(
@@ -170,7 +176,7 @@ describe('Ping Integration (ORPC call)', () => {
       ];
       mockContext.db.query.mockReturnValue(mockRows);
       const result = await call(pingRouter.getPingHistory, undefined, {
-        context: mockContext as any,
+        context: mockContext as unknown as MainContext,
       });
       expect(result).toEqual([
         { id: '1', message: 'pong', timestamp: 1000, count: 1 },
@@ -181,7 +187,7 @@ describe('Ping Integration (ORPC call)', () => {
     it('returns empty array when no history', async () => {
       mockContext.db.query.mockReturnValue([]);
       const result = await call(pingRouter.getPingHistory, undefined, {
-        context: mockContext as any,
+        context: mockContext as unknown as MainContext,
       });
       expect(result).toEqual([]);
     });
@@ -191,7 +197,7 @@ describe('Ping Integration (ORPC call)', () => {
     it('indexes ping record', async () => {
       const pingRecord = { id: '1', message: 'test', timestamp: 1000 };
       await call(pingRouter.indexPing, pingRecord, {
-        context: mockContext as any,
+        context: mockContext as unknown as MainContext,
       });
       expect(mockContext.ai.insert).toHaveBeenCalledWith({
         id: '1',
@@ -217,7 +223,7 @@ describe('Ping Integration (ORPC call)', () => {
       const result = await call(
         pingRouter.searchPings,
         { term: 'test' },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(result).toEqual(mockHits);
       expect(mockContext.ai.search).toHaveBeenCalledWith({
@@ -235,7 +241,7 @@ describe('Ping Integration (ORPC call)', () => {
       const result = await call(
         pingRouter.searchPings,
         { term: 'test', limit: 5 },
-        { context: mockContext as any },
+        { context: mockContext as unknown as MainContext },
       );
       expect(result).toEqual(mockHits);
       expect(mockContext.ai.search).toHaveBeenCalledWith({
@@ -251,7 +257,7 @@ describe('Ping Integration (ORPC call)', () => {
         pingRouter.deletePreference,
         { key: 'theme' },
         {
-          context: mockContext as any,
+          context: mockContext as unknown as MainContext,
         },
       );
       expect(mockContext.prefs.delete).toHaveBeenCalledWith('theme');
@@ -264,7 +270,7 @@ describe('Ping Integration (ORPC call)', () => {
         pingRouter.deleteApiKey,
         { key: 'openai' },
         {
-          context: mockContext as any,
+          context: mockContext as unknown as MainContext,
         },
       );
       expect(mockContext.secrets.delete).toHaveBeenCalledWith('openai');
@@ -277,7 +283,7 @@ describe('Ping Integration (ORPC call)', () => {
         pingRouter.deletePing,
         { id: '42' },
         {
-          context: mockContext as any,
+          context: mockContext as unknown as MainContext,
         },
       );
       expect(mockContext.db.delete).toHaveBeenCalledWith('pings', { id: 42 });
