@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import '../src/app/renderer/index.css';
 import { useState } from 'react';
+import '../src/app/renderer/index.css';
 
 const preview: Preview = {
   decorators: [
@@ -9,17 +9,15 @@ const preview: Preview = {
       const [queryClient] = useState(
         () =>
           new QueryClient({
-            defaultOptions: {
-              queries: {
-                staleTime: 60 * 1000,
-              },
-            },
+            defaultOptions: { queries: { staleTime: 60 * 1000 } },
           }),
       );
 
       return (
         <QueryClientProvider client={queryClient}>
-          <Story />
+          <div className="dark">
+            <Story />
+          </div>
         </QueryClientProvider>
       );
     },
