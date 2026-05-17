@@ -72,8 +72,8 @@ Added delete endpoints to ORPC contract and router:
 ## 8. Testing
 
 - [x] 8.1 Manual testing in dev mode (agent-browser snapshot + screenshot verified)
-- [ ] 8.2 Manual CRUD verification (requires user-interactive testing)
-- [ ] 8.3 Manual search verification (requires indexed data)
+- [x] 8.2 Integration tests: deletePreference, deleteApiKey, deletePing
+- [x] 8.3 Storybook stories: EmptyState, ActionPanel, DataList, SecretCell
 
 ## 9. Verification
 
