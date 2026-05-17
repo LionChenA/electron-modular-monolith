@@ -1,4 +1,4 @@
-import type { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
+import { DatabaseIcon, KeyIcon, SearchIcon, Settings2Icon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export type TabId = 'preferences' | 'secrets' | 'sqlite' | 'search';
